@@ -1,0 +1,10 @@
+revoke execute on function public.is_store_admin() from anon;
+create index if not exists artwork_certificates_product_idx on public.artwork_certificates(product_id);
+create index if not exists artwork_certificates_user_idx on public.artwork_certificates(user_id);
+create index if not exists custom_order_images_order_idx on public.custom_order_images(custom_order_id);
+create index if not exists custom_order_previews_order_idx on public.custom_order_previews(custom_order_id);
+create index if not exists custom_order_history_order_idx on public.custom_order_status_history(custom_order_id);
+create index if not exists product_images_product_idx on public.product_images(product_id);
+create index if not exists product_reservations_user_idx on public.product_reservations(user_id);
+create index if not exists products_category_idx on public.products(category_id);
+create index if not exists wishlist_alerts_user_idx on public.wishlist_alerts(user_id);

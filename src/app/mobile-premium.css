@@ -1,0 +1,128 @@
+.mobile-commerce-dock{display:none}.home-immersive-pause{position:absolute;z-index:5;right:38px;top:35px;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;border:1px solid #e5c99266;background:#11191bd9;color:#f5d499;backdrop-filter:blur(12px)}.home-immersive-pause:hover{background:#e2b875;color:#19282d}.home-immersive-pause svg{width:17px}
+@media(max-width:600px){
+  html{scroll-padding-top:78px}
+  body{padding-bottom:74px;overflow-x:hidden}
+  .craft-header{background:color-mix(in srgb,var(--atelier-paper) 92%,transparent);backdrop-filter:blur(18px);box-shadow:0 1px 0 #1d37371a}
+  .craft-header-inner{min-height:68px!important;padding:10px 14px!important}
+  .craft-brand{font-size:24px!important;letter-spacing:-.055em}
+  .craft-header-icons>a,.icon-control{width:36px!important;min-width:36px!important;height:44px!important}
+  .craft-pink-ribbon{white-space:nowrap;overflow:hidden;padding:10px 8px!important;font-size:7px!important;justify-content:center}
+
+  .craft-hero{margin:10px 10px 0!important;border-radius:18px!important;display:grid!important;grid-template-columns:1fr!important;overflow:hidden;box-shadow:0 18px 50px #1d373724}
+  .craft-hero-copy{padding:38px 24px 28px!important;min-height:auto!important;position:relative;z-index:2}
+  .craft-hero .craft-eyebrow{font-size:9px;letter-spacing:.17em}
+  .craft-hero h1{font-size:clamp(45px,13vw,58px)!important;line-height:.94!important;margin:16px 0 20px!important;max-width:330px}
+  .craft-hero-copy>p{font-size:14px!important;line-height:1.62!important;margin-bottom:0;max-width:310px}
+  .craft-hero-actions{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-top:25px!important}
+  .craft-hero-actions a{min-height:52px;justify-content:center;width:100%;border-radius:10px}
+  .craft-hero .craft-button{box-shadow:0 12px 30px #0b202033}
+  .craft-hero-image{min-height:0!important;height:310px!important;aspect-ratio:auto!important;background:#9f8060!important}
+  .craft-hero-image img{padding:10px!important;object-fit:contain!important;background:radial-gradient(circle,#cdb38d,#806047)}
+  .craft-hero-image:before{inset:10px!important;border-radius:8px}
+
+  .craft-section-inner{padding-inline:18px!important}
+  .craft-featured,.craft-categories,.craft-story,.home-artist-gallery,.home-faq{padding-block:52px!important}
+  .craft-centered-heading{margin-bottom:28px}
+  .craft-centered-heading h2,.craft-section-heading h2,.craft-custom h2,.craft-story h2,.craft-last-cta h2{font-size:clamp(36px,10vw,48px)!important;line-height:1!important}
+  .craft-centered-heading p,.craft-section-heading p{font-size:14px;line-height:1.6}
+  .craft-product-grid{display:flex!important;overflow-x:auto;gap:14px!important;margin-inline:-18px;padding:4px 18px 25px;scroll-snap-type:x mandatory;scrollbar-width:none}
+  .craft-product-grid::-webkit-scrollbar{display:none}
+  .craft-product-grid>.flow-product-card{flex:0 0 82vw;max-width:330px;scroll-snap-align:center;border-radius:18px;overflow:hidden;box-shadow:0 14px 34px #253a3c18}
+  .flow-product-card .brick-image{aspect-ratio:1/1!important}
+  .craft-section-action{margin-top:15px}.craft-section-action a{min-height:50px;width:100%;border-radius:10px}
+
+  .home-immersive-showcase{padding:54px 10px!important}
+  .home-immersive-heading{padding:0 12px!important}.home-immersive-heading h2{font-size:43px!important}
+  .home-immersive-stage{height:590px!important;min-height:0!important;border-radius:18px}
+  .home-immersive-pause{right:15px;top:15px;width:44px;height:44px}
+  .home-immersive-caption{bottom:72px!important;border-radius:12px}.home-immersive-enter{border-radius:10px}
+  .home-artist-gallery-grid{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-18px;padding-inline:18px;scrollbar-width:none}
+  .home-artist-gallery-grid>a{flex:0 0 78vw;scroll-snap-align:center}
+
+  .craft-category-grid{display:flex!important;overflow-x:auto;scroll-snap-type:x mandatory;margin-inline:-18px;padding:0 18px 20px;gap:13px!important;scrollbar-width:none}
+  .craft-category-grid>.craft-category{flex:0 0 78vw;scroll-snap-align:center;border-radius:16px}
+  .craft-custom{margin:0 10px;border-radius:18px;overflow:hidden}.craft-custom-copy{padding:42px 24px!important}
+  .craft-promise-grid{gap:12px!important}.craft-promise-grid>div{padding:24px;border-radius:14px;background:#fffdf8;border:1px solid #ddcfbe}
+  .home-faq button{min-height:58px;text-align:left}
+  .craft-last-cta{margin:0 10px 18px;border-radius:18px;padding-inline:22px!important}
+  .footer{padding-bottom:95px!important}.footer-grid{grid-template-columns:1fr!important}.footer-grid>div:first-child{grid-column:auto!important}
+
+  .mobile-commerce-dock{position:fixed;z-index:998;left:9px;right:9px;bottom:8px;height:64px;padding:6px;display:grid;grid-template-columns:1fr 1.25fr 1fr;align-items:center;background:#fffdf9e8;border:1px solid #d7c8b6;border-radius:18px;box-shadow:0 14px 45px #10262935;backdrop-filter:blur(20px)}
+  .mobile-commerce-dock a{height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#21383c;background:#fff;font-size:10px;font-weight:800;border:1px solid #eee6dc;border-radius:13px;box-shadow:0 2px 8px #1a34300a}
+  .mobile-commerce-dock a[aria-current="page"]{background:#a94835;color:#fff;border-color:#a94835;box-shadow:0 7px 18px #a9483540;transform:translateY(-2px)}
+  .mobile-commerce-dock a[aria-current="page"] svg{stroke-width:2.5;filter:drop-shadow(0 2px 4px #0003)}
+  .mobile-commerce-dock a:active:not([aria-current="page"]){background:#f5efe7;color:#a94835;transform:scale(.96)}
+  .mobile-commerce-dock a[aria-current="page"]:active{background:#a94835;color:#fff;transform:translateY(-2px) scale(.98)}
+  .product-price-stack{gap:7px}.product-discount-badge{font-size:10px;padding:3px 7px}
+  .floating-tools{bottom:82px!important}.cookie-banner{bottom:82px!important}.floating-contact{display:none!important}
+}
+@media(max-width:370px){.craft-brand{font-size:21px!important}.craft-header-inner{padding-inline:9px!important}.craft-header-icons>a,.icon-control{width:32px!important;min-width:32px!important}.craft-hero h1{font-size:43px!important}.craft-hero-copy{padding-inline:20px!important}}
+@media(max-width:800px){
+  .home-immersive-showcase{padding:48px 14px!important}
+  .home-immersive-heading{grid-template-columns:minmax(0,1fr)!important;gap:11px!important;margin-bottom:20px!important;padding:0 7px!important}
+  .home-immersive-heading h2{font-size:clamp(34px,9vw,43px)!important;line-height:1.02!important}
+  .home-immersive-heading>p{max-width:38rem;font-size:13px!important;line-height:1.6!important}
+  .home-immersive-stage{display:grid!important;grid-template-columns:minmax(0,1fr);height:auto!important;min-height:0!important;gap:0;padding-bottom:12px;border-radius:16px}
+  .home-immersive-canvas{position:relative!important;inset:auto!important;width:100%;height:auto!important;aspect-ratio:.93/1;min-height:310px;max-height:54svh}
+  .home-immersive-canvas canvas{display:block!important;width:100%!important;height:100%!important}
+  .home-immersive-caption{position:relative!important;inset:auto!important;min-width:0;margin:0 13px;padding:13px 14px;grid-template-columns:auto minmax(0,1fr);gap:9px 12px;border-radius:10px;background:#11191bf2}
+  .home-immersive-caption>span{font-size:23px}
+  .home-immersive-caption>div{min-width:0}
+  .home-immersive-caption small{font-size:8px;letter-spacing:.14em}
+  .home-immersive-caption strong{font-size:17px;line-height:1.25;overflow-wrap:anywhere}
+  .home-immersive-caption>i{margin-top:2px}
+  .home-immersive-enter{position:relative!important;inset:auto!important;min-height:50px;margin:9px 13px 0;justify-content:center;border-radius:9px}
+  .home-immersive-pause{right:16px;top:16px;width:42px;height:42px}
+  .home-immersive-loading{font-size:10px;letter-spacing:.07em;padding:20px}
+}
+
+/* Account screens: preserve contrast in dark mode and make mobile forms easier to scan. */
+.account-header .eyebrow{color:#a84431}
+.account-header h1{max-width:16ch;margin-inline:auto;text-wrap:balance}
+.account-panel h2{color:var(--atelier-ink,#24343d)}
+.account-methods{border:1px solid #d8ded9;border-radius:12px}
+.account-methods button{min-height:48px;border-radius:9px}
+.account-switch button,.account-admin-link a,.account-text-action{min-height:44px}
+.account-form .field{color:#34444a}
+.account-form input{min-height:52px;padding:12px 14px;color:#24343d}
+html[data-theme=dark] .account-header .eyebrow{color:#e9c28a}
+html[data-theme=dark] .account-panel{background:#1c3037;border-color:#42585d;color:#edf2ef;box-shadow:0 18px 48px #06131666}
+html[data-theme=dark] .account-panel h2,
+html[data-theme=dark] .account-panel p,
+html[data-theme=dark] .account-panel .field,
+html[data-theme=dark] .account-form .field{color:#edf2ef!important}
+html[data-theme=dark] .account-header p{color:#cbd7d5!important}
+html[data-theme=dark] .account-methods{background:#14272c;border-color:#42585d}
+html[data-theme=dark] .account-methods button{color:#d8e1df}
+html[data-theme=dark] .account-methods button.selected{background:#e4bf87;color:#17292d;box-shadow:0 2px 10px #0005}
+html[data-theme=dark] .account-form input{background:#102329;border-color:#62777c;color:#fff}
+html[data-theme=dark] .account-form input::placeholder{color:#a8b9b8;opacity:1}
+html[data-theme=dark] .account-switch button,
+html[data-theme=dark] .account-admin-link a,
+html[data-theme=dark] .account-text-action{color:#f0c987!important}
+html[data-theme=dark] .account-admin-link{border-top-color:#42585d}
+html[data-theme=dark] .account-kicker,
+html[data-theme=dark] .account-message,
+html[data-theme=dark] .account-signout{color:#f0c987!important}
+html[data-theme=dark] .account-panel .form-feedback.error{background:#482d2b;color:#ffd7ce;border-color:#94574d}
+html[data-theme=dark] .account-panel .form-feedback.success{background:#203d35;color:#d7f2df;border-color:#4e8169}
+@media(max-width:600px){
+  .account-header{padding:38px 20px 30px!important}
+  .account-header h1{max-width:12ch;font-size:clamp(34px,9.5vw,46px)!important;line-height:1.04!important}
+  .account-header p{max-width:34ch;font-size:14px!important;line-height:1.6!important}
+  .account-content{width:100%;max-width:560px;padding:20px 16px 96px!important}
+  .account-panel{padding:22px 18px!important;border-radius:18px!important}
+  .account-panel h2{font-size:clamp(27px,7.5vw,32px)!important;line-height:1.1}
+  .account-panel p{font-size:14px;line-height:1.65}
+  .account-methods{gap:4px;margin-bottom:22px;padding:4px}
+  .account-methods button{padding:10px 6px;font-size:13px}
+  .account-form{gap:17px}
+  .account-form .field{font-size:14px}
+  .account-form input{font-size:16px;min-height:52px}
+  .account-panel .account-submit{min-height:52px;padding:13px 16px}
+  .account-switch{font-size:13px!important;line-height:1.7}
+  .account-admin-link{font-size:13px!important;line-height:1.7}
+  .account-panel .account-actions{display:grid;grid-template-columns:1fr}
+  .account-panel .account-actions .button{width:100%;min-height:48px}
+}
+@media(max-width:370px){.account-content{padding-inline:12px!important}.account-panel{padding:19px 15px!important}.account-methods button{font-size:12px}}

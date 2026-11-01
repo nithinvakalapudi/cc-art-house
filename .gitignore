@@ -39,3 +39,17 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local Netlify folder
+.netlify
+
+# Local deploy bundles and diagnostics
+/.netlify-upload/
+/deploy-*.zip
+*.log
+/.premium-migration-payload.json
+
+
+# Supabase CLI local state
+/supabase/.temp/
+

@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# The Art House — handmade art storefront
 
-## Getting Started
+Next.js App Router, TypeScript, Tailwind CSS and Supabase based storefront inspired by Craftitude’s product-first navigation, best-seller grid and promotional sections.
 
-First, run the development server:
+The public homepage and shop now use `@flowstack-ui/brick@0.3.0` components. See [FLOWSTACK_NOTES.md](./FLOWSTACK_NOTES.md) for the package guidance, artwork asset, and remaining UI scope.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Current status
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This is a **local, partially implemented application**, not a deployable commerce store. The selected existing Supabase project is inactive and cannot be restored through the connected integration. Read [SCHEMA_PLAN.md](./SCHEMA_PLAN.md) before applying any database change. No migration has been applied.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Implemented locally: responsive homepage, catalogue and product details, search/filter/sort, Supabase Auth UI, custom-art specifications and live estimate UI, server recalculation and authenticated request endpoint, private reference-image upload path, account request/order lists, protected admin shell, admin product creation, pricing rule creation, custom-request list/detail/status editing, order list, and content settings UI. These data flows are coded to a proposed schema and have **not** been verified against a live database.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Not yet implemented: safe schema migration, RLS/storage policies, product editing and image upload management, atomic inventory reservation, working cart and checkout, Razorpay order/webhook verification, refunds, customer notifications, full content management, and end-to-end tests. Checkout is intentionally disabled until unique artwork inventory can be reserved atomically and payment events verified. The admin status change and history insert also need a database transaction before production use.
 
-## Learn More
+## Connect to the same existing Supabase project
 
-To learn more about Next.js, take a look at the following resources:
+1. Obtain an active existing project or restorable backup. Inspect the schema and reconcile it with `SCHEMA_PLAN.md` before any migration.
+2. Copy `.env.example` to `.env.local`. Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from that **same existing project**. Only the publishable key may be exposed to the browser. Never put a secret or service role key in a `NEXT_PUBLIC_` variable.
+3. Configure the actual database tables, RLS, Storage bucket and administrator role. Only grant admin role through a trusted database operation; do not allow customers to assign themselves roles.
+4. Run `npm ci`, then `npm run dev`. Run `npm run build` before deployment.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+No integration credential was copied into the application. The connected ChatGPT integration does not automatically provide runtime credentials to a local Next.js process. The app therefore reads authorized environment variables supplied by the project owner.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Design reference
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The layout follows [Craftitude](https://www.craftitude.co.in/) in its simple top navigation, prominent shop entry, best-seller cards, promotional copy and broad footer, adapted to original paintings and commissions.

@@ -1,0 +1,3 @@
+export type Rule={kind:string;option_key:string;label:string;amount:number;active:boolean};
+export type Selection={size:string;style:string;medium:string;frame:string;complexity:string;priority:string};
+export function calculate(rules:Rule[],selection:Selection){const components=[['size',selection.size],['style',selection.style],['medium',selection.medium],['frame',selection.frame],['complexity',selection.complexity],['priority',selection.priority]].map(([kind,key])=>rules.find(r=>r.kind===kind&&r.option_key===key&&r.active)).filter((r):r is Rule=>!!r);if(components.length!==6)throw new Error('A selected pricing option is unavailable.');const subtotal=components.reduce((sum,r)=>sum+Number(r.amount),0);return {components,subtotal,total:subtotal}}

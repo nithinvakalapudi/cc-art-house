@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server';import {publicDb} from '@/lib/data';
+export async function GET(){const db=publicDb();if(!db)return NextResponse.json({error:'Store is not connected'},{status:503});const {data,error}=await db.from('custom_pricing_rules').select('kind,option_key,label,amount,active').eq('active',true).order('sort_order');return error?NextResponse.json({error:'Pricing unavailable'},{status:503}):NextResponse.json({rules:data})}

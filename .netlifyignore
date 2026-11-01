@@ -1,0 +1,9 @@
+node_modules/
+.next/
+build/
+.git/
+.env*
+.premium-migration-payload.json
+tests/
+supabase/
+*.log
