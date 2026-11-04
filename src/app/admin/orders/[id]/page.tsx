@@ -30,6 +30,7 @@ export default async function AdminOrderDetail({ params }: { params: Promise<{ i
     {!canWrite && <p className="notice">Read access: order details are visible, updates are disabled.</p>}
     {error && <p className="error">Order could not be loaded.</p>}
     <p className="muted">Placed {new Date(order.created_at).toLocaleString('en-IN')}</p>
+    {order.cancelled_by === 'customer' && <section className="notice customer-cancellation-notice"><strong>Customer cancellation received</strong><p>{order.cancellation_reason || 'No reason was provided.'}</p>{order.cancelled_at && <small>Cancelled {new Date(order.cancelled_at).toLocaleString('en-IN')}</small>}{order.payment_status === 'paid' && <p>Payment was paid when this order was cancelled. Review the payment and arrange a refund if appropriate.</p>}</section>}
     <div className="order-admin-grid">
       <section className="panel order-detail-panel">
         <h2>Customer and delivery</h2>

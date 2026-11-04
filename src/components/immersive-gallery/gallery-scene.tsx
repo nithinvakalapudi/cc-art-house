@@ -3,7 +3,7 @@
 
 import { useEffect, useMemo, useRef } from 'react';
 import { useFrame, useLoader, useThree } from '@react-three/fiber';
-import { AdaptiveDpr, ContactShadows, Environment, Html, MeshReflectorMaterial, Text } from '@react-three/drei';
+import { AdaptiveDpr, ContactShadows, Html, MeshReflectorMaterial, Text } from '@react-three/drei';
 import * as THREE from 'three';
 import type { GalleryArtwork } from './immersive-gallery';
 
@@ -103,7 +103,6 @@ export default function GalleryScene({ artworks, targetStop, paused, reducedMoti
     <fog attach="fog" args={[atmosphere === 'day' ? '#44413c' : '#171716', 24, 50]} />
     <ambientLight intensity={atmosphere === 'day' ? .52 : .2} color={atmosphere === 'day' ? '#fff4df' : '#ead9be'} />
     <directionalLight castShadow position={[0, 8, 7]} intensity={atmosphere === 'day' ? 2.1 : 1.15} color="#ffe4bd" shadow-mapSize={[1024, 1024]} />
-    <Environment preset="apartment" environmentIntensity={.13} />
     <MuseumShell />
     {!reducedMotion && !mobileQuality && <DustMotes />}
     {artworks.map((art, index) => <ArtworkFrame key={art.id} art={art} index={index} showHotspot={showHotspot && focusedStop === index} onSelect={() => onSelect(index)} />)}

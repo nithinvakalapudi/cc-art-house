@@ -4,6 +4,7 @@ import { serverDb } from '@/lib/supabase-server';
 import OrderTimeline from '@/components/order-timeline';
 import ReviewForm from '@/components/review-form';
 import RazorpayPayButton from '@/components/razorpay-pay-button';
+import OrderCancellationForm from '@/components/order-cancellation-form';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,6 +34,7 @@ export default async function MyOrders() {
       {order.payment_method === 'razorpay' && order.payment_status !== 'paid' && order.status !== 'cancelled' && (order.delivery_priced && !order.gift_wrap
         ? <RazorpayPayButton orderId={order.id} canPay/>
         : <p className="muted">Online payment opens after the studio confirms delivery pricing and any gift service.</p>)}
+      {order.status === 'pending_confirmation' && order.payment_status === 'unpaid' && <OrderCancellationForm orderId={order.id} />}
     </article>)}
     {!error && !orders?.length && <div className="empty-card">No orders yet. When you find a painting you love, add it to your cart and place an order here.<p><Link className="text-link" href="/shop">Browse paintings</Link></p></div>}
   </div></>;

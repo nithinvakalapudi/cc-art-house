@@ -36,7 +36,7 @@ export default function LazyHomeGallery({ products }: { products: Product[] }) {
 
 function GalleryPoster({ onStart, busy = false }: { onStart?: () => void; busy?: boolean }) {
   return <div className="home-gallery-poster">
-    <Image src="/artist-gallery/traditional-portrait-optimized.webp" alt="Preview of the interactive private art gallery" fill sizes="100vw" loading="lazy" />
+    <Image src="/artist-gallery/traditional-portrait-optimized.webp" alt="Preview of the interactive private art gallery" fill sizes="100vw" loading="eager" fetchPriority="high" />
     <div className="home-gallery-poster-shade" />
     <div className="home-gallery-poster-copy"><span>IMMERSIVE PRIVATE GALLERY</span><h2>Step inside the<br/>collection.</h2><p>{busy ? 'Preparing the gallery…' : 'Load the 3D tour only when you are ready.'}</p>{onStart&&<button type="button" onClick={onStart}><Play size={17} fill="currentColor"/> Start 3D tour</button>}</div>
   </div>;
