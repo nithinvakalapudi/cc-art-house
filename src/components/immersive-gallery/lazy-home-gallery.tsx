@@ -15,11 +15,9 @@ const HomeGalleryShowcase = dynamic(() => import('./home-gallery-showcase'), {
 export default function LazyHomeGallery({ products }: { products: Product[] }) {
   const shell = useRef<HTMLElement>(null);
   const [nearby, setNearby] = useState(false);
-  const [mobile, setMobile] = useState(false);
   const [activated, setActivated] = useState(false);
 
   useEffect(() => {
-    setMobile(window.matchMedia('(max-width: 800px)').matches);
     const element = shell.current;
     if (!element) return;
     const observer = new IntersectionObserver(([entry]) => {
@@ -29,7 +27,7 @@ export default function LazyHomeGallery({ products }: { products: Product[] }) {
     return () => observer.disconnect();
   }, []);
 
-  const shouldLoad = nearby && (!mobile || activated);
+  const shouldLoad = nearby || activated;
   if (shouldLoad) return <HomeGalleryShowcase products={products} />;
   return <section ref={shell} className="home-gallery-poster-shell"><GalleryPoster onStart={() => setActivated(true)} /></section>;
 }

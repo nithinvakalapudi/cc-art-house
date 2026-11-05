@@ -151,3 +151,49 @@ body{background:#f9f7f2;color:#243038}
 @media(max-width:800px){.gallery-journey{left:14px;right:14px;bottom:145px;justify-content:center;overflow-x:auto}.gallery-journey button{flex:0 0 31px;height:40px}.gallery-art-panel{bottom:192px;max-height:48svh}.gallery-controls{bottom:86px}.gallery-panel-actions>*{flex:1 1 130px}.gallery-frame-hotspot{font-size:8px;padding:6px 9px}}
 .gallery-moving-title{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);display:grid;gap:7px;text-align:center;pointer-events:none;text-shadow:0 3px 18px #000}.gallery-moving-title small{color:#dbb878;font-size:9px;font-weight:800;letter-spacing:.22em}.gallery-moving-title strong{font:400 clamp(26px,4vw,50px)/1 Georgia,serif;color:#fff}.gallery-moving-title:after{content:"";width:45px;height:1px;background:#dbb878;margin:7px auto 0}@media(max-width:800px){.gallery-moving-title{top:39%}.gallery-moving-title strong{font-size:29px}}
 .gallery-quiz-launch{margin-top:.65rem!important;background:transparent!important;border:1px solid rgba(255,255,255,.4)!important;color:#fff!important}.gallery-premium-tools{position:absolute;z-index:24;right:1.5rem;top:5.5rem;display:flex;gap:.45rem}.gallery-premium-tools button{width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.24);background:rgba(16,18,18,.72);color:#fff;display:grid;place-items:center;backdrop-filter:blur(14px)}.gallery-premium-tools button.active{background:#c49a5a;color:#172629}.gallery-experience-actions{position:absolute;z-index:25;left:50%;bottom:7.5rem;transform:translateX(-50%);display:flex;gap:.35rem;padding:.45rem;background:rgba(15,18,18,.78);border:1px solid rgba(255,255,255,.15);border-radius:999px;backdrop-filter:blur(18px);white-space:nowrap}.gallery-experience-actions button,.gallery-experience-actions label,.gallery-experience-actions a{border:0;background:transparent;color:#fff;padding:.62rem .72rem;border-radius:999px;display:flex;align-items:center;gap:.35rem;font:600 .72rem/1 var(--font-body);cursor:pointer;text-decoration:none}.gallery-experience-actions button:hover,.gallery-experience-actions label:hover,.gallery-experience-actions a:hover{background:#c49a5a;color:#13262a}.gallery-experience-actions svg{width:15px}.gallery-experience-actions input{display:none}.gallery-modal{position:absolute;inset:0;z-index:60;background:rgba(10,12,12,.91);display:grid;place-items:center;padding:clamp(1rem,4vw,3rem);backdrop-filter:blur(18px)}.gallery-modal-close{position:absolute;right:1.5rem;top:1.5rem;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:#16282b;color:#fff;display:grid;place-items:center;z-index:2}.gallery-inspect{width:min(1100px,92vw);height:min(78vh,760px);display:grid;grid-template-columns:minmax(0,1.5fr) minmax(260px,.5fr);background:#eee8dd;color:#17282c}.gallery-inspect>img{width:100%;height:100%;object-fit:contain;background:#171717;cursor:zoom-in;transition:transform .5s}.gallery-inspect>img:hover{transform:scale(1.18)}.gallery-inspect>div{padding:clamp(1.5rem,4vw,4rem);align-self:center}.gallery-inspect h2,.gallery-quiz h2{font-family:var(--font-display);font-size:clamp(2rem,4vw,4rem);line-height:.95}.gallery-room-preview{width:min(1100px,94vw);height:min(75vh,720px);background-size:cover;background-position:center;display:grid;place-items:center;position:relative;overflow:hidden}.gallery-room-preview:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.08),rgba(0,0,0,.25));pointer-events:none}.gallery-room-preview img{max-width:32%;max-height:56%;object-fit:contain;padding:10px;background:#6e5035;box-shadow:0 16px 40px #0008;z-index:1}.gallery-room-preview span{position:absolute;bottom:1rem;z-index:2;background:#fff;color:#17282c;padding:.6rem 1rem;border-radius:999px}.gallery-quiz{width:min(620px,90vw);padding:clamp(2rem,6vw,5rem);background:#eee8dd;color:#17282c;text-align:center}.gallery-quiz button{display:block;width:100%;margin:.75rem 0;padding:1rem;border:1px solid #a89170;background:transparent;color:#17282c;font-weight:700}.gallery-quiz button:hover{background:#17383c;color:#fff}@media(max-width:800px){.gallery-premium-tools{top:4.5rem;right:.7rem}.gallery-experience-actions{left:.65rem;right:.65rem;bottom:9.3rem;transform:none;overflow-x:auto;justify-content:flex-start;border-radius:18px}.gallery-inspect{grid-template-columns:1fr;height:auto;max-height:88vh;overflow:auto}.gallery-inspect>img{height:55vh}.gallery-inspect>div{padding:1.25rem}.gallery-room-preview img{max-width:52%;max-height:48%}}@media(prefers-reduced-motion:reduce){.gallery-inspect>img,.gallery-inspect>img:hover{transition:none;transform:none}}
+
+.museum-walk-tools{position:absolute;right:1rem;bottom:5rem;z-index:6;display:flex;align-items:center;gap:.5rem}
+.museum-walk-tools button{background:#11171be8;color:#f3d7a7;border:1px solid #bd9457;padding:.7rem;border-radius:.4rem}
+.museum-walk-tools .museum-joystick{touch-action:none;width:64px;height:64px;border-radius:50%;font-size:1.5rem}
+.immersive-gallery .gallery-journey button{width:28px;height:32px;background:transparent;border:0;color:#c9bba3}
+.immersive-gallery .gallery-journey button span{position:static;background:none;color:inherit}
+.immersive-gallery .gallery-journey button.active{color:#ffce7e}
+@media(max-width:800px){.museum-walk-tools{bottom:7rem}.immersive-gallery .gallery-journey button{width:22px}}
+
+.immersive-gallery .gallery-finale{inset:auto 0 1.25rem;transform:none;margin:auto;width:max-content;max-width:calc(100% - 2rem);padding:.65rem 1rem;background:#14181ee8;border:1px solid #bd9457;border-radius:.5rem}
+
+.home-immersive-stage .home-immersive-canvas,.museum-art-preview{position:absolute;inset:0 39% 0 0}
+.museum-art-preview img{width:100%;height:100%;object-fit:contain}
+.museum-art-details{position:absolute;z-index:2;inset:0 0 0 61%;display:flex;flex-direction:column;justify-content:center;padding:clamp(20px,3vw,50px);padding-bottom:90px;background:radial-gradient(ellipse at 90% 75%,#302219,#0b141a 65%);border-left:1px solid #a77a43;color:#f4eee5;overflow:auto}
+.museum-art-details h3{font:clamp(24px,2.6vw,42px)/1.1 Georgia,serif;color:#f5d294;margin:0}
+.museum-art-details h3::after{content:"";display:block;background:#edb85f;width:68px;height:2px;margin:18px 0}
+.museum-art-details dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:0;padding-bottom:18px;border-bottom:1px solid #a77a43}
+.museum-art-details dl div{display:flex;gap:8px;align-items:flex-start}
+.museum-art-details svg{color:#efc67e;flex-shrink:0}
+.museum-art-details dt{color:#b6c0c0;font-size:.78rem}
+.museum-art-details dd{margin:0;font:1rem Georgia,serif}
+.museum-art-details h4{color:#edbb72;font:italic 1.3rem Georgia,serif;margin:18px 0 8px}
+.museum-art-details p{margin:0 0 18px;line-height:1.5;max-height:7.5em;overflow:auto}
+.museum-art-actions,.museum-art-navigation{display:flex;gap:8px;flex-wrap:wrap}
+.museum-art-actions a,.museum-art-navigation button{display:inline-flex;align-items:center;gap:6px;border:1px solid #edb85f;border-radius:99px;padding:8px 12px;color:#f4ca88;background:#0c151b}
+.museum-art-actions a:first-child{background:#edb85f;color:#15100a}
+.museum-art-actions a:first-child svg{color:inherit}
+.museum-art-navigation{position:absolute;z-index:4;right:24px;bottom:22px}
+.home-immersive-stage .home-immersive-enter{right:128px}
+.home-immersive-stage .home-immersive-pause{z-index:5}
+@media(max-width:800px){
+.home-immersive-stage:has(.museum-art-details){height:auto;display:flex;flex-direction:column;padding-bottom:82px}
+.home-immersive-stage .home-immersive-canvas,.museum-art-preview{position:relative;inset:auto;height:390px}
+.museum-art-details{position:relative;inset:auto;padding:22px;border-left:0;border-top:1px solid #a77a43}
+.home-immersive-stage .home-immersive-caption{position:relative;inset:auto;margin:8px 12px}
+}
+
+.home-immersive-stage:not(:has(.museum-art-details)) .home-immersive-canvas{position:absolute;inset:0;width:100%;height:100%}
+.home-immersive-stage .museum-wall-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;background:none;padding:0;transform:none}
+.museum-wall-actions a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid #edb85f;border-radius:99px;background:#0c151b;color:#f4ca88}
+.museum-wall-actions a:first-child{background:#edb85f;color:#15100a}
+@media(max-width:800px){
+.home-immersive-stage .museum-wall-actions{position:absolute;left:12px;right:100px;bottom:12px;justify-content:flex-start}
+.home-immersive-stage:not(:has(.museum-art-details)) .home-immersive-caption{position:absolute;inset:auto 12px 100px;margin:0}
+}
+.museum-wall-actions button{padding:8px 12px;border:1px solid #edb85f;border-radius:99px;background:#0c151b;color:#f4ca88}
