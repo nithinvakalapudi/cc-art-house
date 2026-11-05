@@ -26,6 +26,7 @@ type Props = {
   onMoving: (moving: boolean) => void;
   onArrive: (index: number) => void;
   onSelect: (index: number) => void;
+  onLabelSelect?: () => void;
   atmosphere?: 'day' | 'evening';
 };
 type Pose = { position: THREE.Vector3; quaternion: THREE.Quaternion };
@@ -42,11 +43,11 @@ function poseFor(index: number, mobileQuality = false, wallDetails = false, focu
   const left = index % 2 === 0, z = Z_STOPS[index];
   if (wallDetails) {
     const direction = left ? 1 : -1;
-    const offset = mobileQuality ? (focusWallText ? 2.8 : 0) : 1.4;
-    const distance = mobileQuality ? 0 : -.95;
+    const offset = mobileQuality && focusWallText ? 2.8 : 1.4;
+    const distance = mobileQuality ? 1.35 : -.95;
     return lookPose(new THREE.Vector3(left ? distance : -distance, 1.77, z + direction * offset), new THREE.Vector3(left ? -4.73 : 4.73, 1.77, z + direction * offset));
   }
-  const aisleOffset = mobileQuality ? 1.72 : 1.12;
+  const aisleOffset = mobileQuality ? .65 : 1.12;
   return lookPose(new THREE.Vector3(left ? -aisleOffset : aisleOffset, 1.72, z + .22), new THREE.Vector3(left ? -4.73 : 4.73, 1.72, z));
 }
 function transitionFor(from: Pose, to: Pose, target: number, duration: number): Transition {
@@ -62,9 +63,10 @@ function transitionFor(from: Pose, to: Pose, target: number, duration: number): 
   return { from, to, aisle, path, elapsed: 0, duration, target, active: true };
 }
 
-export default function GalleryScene({ manual = false, walkInput, artworks, targetStop, wallDetails = false, focusWallText = false, paused, reducedMotion, mobileQuality = false, transitionDuration = 3.8, focusedStop = -1, showHotspot = false, atmosphere = 'evening', onReady, onMoving, onArrive, onSelect }: Props) {
+export default function GalleryScene({ manual = false, walkInput, artworks, targetStop, wallDetails = false, focusWallText = false, paused, reducedMotion, mobileQuality = false, transitionDuration = 3.8, focusedStop = -1, showHotspot = false, atmosphere = 'evening', onReady, onMoving, onArrive, onSelect, onLabelSelect }: Props) {
   const { camera, gl } = useThree();
   const regress = useThree(state => state.performance.regress);
+  const [arrivedStop, setArrivedStop] = useState(-1);
   const startPose = poseFor(-1, mobileQuality);
   const transition = useRef<Transition>(transitionFor(startPose, startPose, -1, 1));
   const lastTarget = useRef(-2);
@@ -137,6 +139,7 @@ export default function GalleryScene({ manual = false, walkInput, artworks, targ
       move.active = false;
       camera.position.copy(move.to.position);
       camera.quaternion.copy(move.to.quaternion);
+      setArrivedStop(move.target);
       onArrive(move.target);
     }
   });
@@ -146,11 +149,11 @@ export default function GalleryScene({ manual = false, walkInput, artworks, targ
     <fog attach="fog" args={[atmosphere === 'day' ? '#44413c' : '#171716', 38, 65]} />
     <hemisphereLight args={["#c1d3ec", "#554135", .34]} />
     <ambientLight intensity={atmosphere === 'day' ? .30 : .14} color={atmosphere === 'day' ? '#fff4df' : '#ead9be'} />
-    <directionalLight castShadow position={[0, 8, 7]} intensity={atmosphere === 'day' ? 1.65 : .95} color="#ffe4bd" shadow-mapSize={[1024, 1024]} />
+    <directionalLight castShadow position={[0, 8, 7]} intensity={atmosphere === 'day' ? 1.65 : .95} color="#ffe4bd" shadow-mapSize={mobileQuality ? [512, 512] : [1024, 1024]} />
     <MuseumShell mobileQuality={mobileQuality} />
     {!reducedMotion && !mobileQuality && <DustMotes />}
-    {wallDetails && artworks[targetStop] && <ArtworkWallText art={artworks[targetStop]} index={targetStop} />}
-    {artworks.map((art, index) => <ArtworkFrame key={art.id} art={art} index={index} highlighted={targetStop === index} showHotspot={showHotspot && focusedStop === index} onSelect={() => onSelect(index)} />)}
+    {wallDetails && artworks[targetStop] && <ArtworkWallText art={artworks[targetStop]} index={targetStop} compact={mobileQuality} visible={arrivedStop === targetStop} onSelect={onLabelSelect} />}
+    {artworks.map((art, index) => <ArtworkFrame key={art.id} art={art} index={index} highlighted={targetStop === index} illuminated={arrivedStop === index && targetStop === index} showHotspot={showHotspot && focusedStop === index} onSelect={() => onSelect(index)} />)}
     {!mobileQuality && <ContactShadows position={[0, .025, -10]} opacity={.36} scale={42} blur={2.6} far={15} />}
   </>;
 }
@@ -202,7 +205,7 @@ function useMarble(light = false) {
 function MuseumShell({ mobileQuality }: { mobileQuality: boolean }) {
   const marble = useMarble();
   return <group>
-    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -10]}><planeGeometry args={[10, 40]} /><MeshReflectorMaterial key={marble?.uuid ?? "untextured"} map={marble} color="#ffffff" roughness={.36} metalness={.04} mirror={.26} resolution={mobileQuality ? 128 : 512} blur={[500, 130]} mixBlur={.9} mixStrength={.85} /></mesh>
+    <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -10]}><planeGeometry args={[10, 40]} /><MeshReflectorMaterial key={marble?.uuid ?? "untextured"} map={marble} color="#ffffff" roughness={.36} metalness={.04} mirror={.26} resolution={mobileQuality ? 128 : 512} blur={mobileQuality ? [0, 0] : [500, 130]} mixBlur={.9} mixStrength={.85} /></mesh>
     <mesh receiveShadow position={[-5.1, 2.7, -10]} rotation={[0, Math.PI / 2, 0]}><planeGeometry args={[40, 5.4]} /><meshStandardMaterial color="#171e2b" roughness={.9} /></mesh>
     <mesh receiveShadow position={[5.1, 2.7, -10]} rotation={[0, -Math.PI / 2, 0]}><planeGeometry args={[40, 5.4]} /><meshStandardMaterial color="#171e2b" roughness={.9} /></mesh>
     {[{ z: -15.3, length: 29.4 }, { z: 7.3, length: 5.4 }].map(({ z, length }) => (
@@ -266,7 +269,7 @@ function MuseumShell({ mobileQuality }: { mobileQuality: boolean }) {
       <group key={side}>
         <MarbleColumn x={side * 2.82} />
         <Planter x={side * 4.05} z={-26.3} scale={side < 0 ? 1.35 : 1.24} />
-        <Planter x={side * 4.27} z={7.4} />
+        <Planter x={side * 4.15} z={9.1} />
       </group>
     ))}
   </group>;
@@ -461,7 +464,9 @@ function FigLeaf({ length, variant }: { length: number; variant: number }) {
       const secondary = Math.pow(Math.max(0, Math.cos((t - .19 * sideDistance ** .72) * 67)), 20);
       const midrib = Math.exp(-sideDistance * 38);
       const mottling = .01 * Math.sin(t * 28 + side * 8 + variant) + .006 * Math.sin(t * 49 - side * 17);
-      green.setHSL(.249 + variant * .009 - midrib * .045, .56, .15 + .085 * t + .052 * secondary + .14 * midrib + mottling);
+      const fineVeins = Math.pow(Math.max(0, Math.cos(t * 127 - sideDistance * 25)), 12) * taper;
+      const edgeTint = Math.pow(sideDistance, 7) * taper;
+      green.setHSL(.249 + variant * .009 - midrib * .045, .56, .15 + .085 * t + .052 * secondary + .14 * midrib + .017 * fineVeins + .019 * edgeTint + mottling);
       colors.push(green.r, green.g, green.b);
     }
     leaf.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
@@ -484,6 +489,15 @@ function FigLeaf({ length, variant }: { length: number; variant: number }) {
 function Planter({ x, z, scale = 1 }: { x: number; z: number; scale?: number }) {
   const marble = useMarble();
   return <group position={[x, 0, z]} scale={scale} rotation={[0, x * .32 + z * .19, 0]}>
+    <pointLight position={[.42, .22, .27]} color="#ffd39b" intensity={1.6} distance={2.2} decay={2} />
+    <mesh position={[.42, .033, .27]}>
+      <cylinderGeometry args={[.075, .085, .055, 16]} />
+      <meshStandardMaterial color="#9c713e" metalness={.65} roughness={.4} />
+    </mesh>
+    <mesh position={[.42, .063, .27]} rotation={[-Math.PI / 2, 0, 0]}>
+      <circleGeometry args={[.055, 16]} />
+      <meshBasicMaterial color="#ffdaa0" />
+    </mesh>
     <mesh position={[0, .29, 0]} castShadow receiveShadow>
       <cylinderGeometry args={[.29, .27, .56, 32]} />
       <meshStandardMaterial key={marble?.uuid} map={marble} color={marble ? '#d2a36e' : '#25211e'} roughness={.43} />
@@ -686,7 +700,12 @@ const frameStyles = [
   { frame: '#6a3f21', trim: '#c19a55', metal: .22 }, { frame: '#24211f', trim: '#c69a4d', metal: .55 },
   { frame: '#7b5839', trim: '#d2b276', metal: .18 }, { frame: '#40342d', trim: '#b6864e', metal: .4 },
 ];
-function ArtworkFrame({ art, index, highlighted, showHotspot, onSelect }: { art: GalleryArtwork; index: number; highlighted: boolean; showHotspot: boolean; onSelect: () => void }) {
+function ArtworkFrame({ art, index, highlighted, illuminated, showHotspot, onSelect }: { art: GalleryArtwork; index: number; highlighted: boolean; illuminated: boolean; showHotspot: boolean; onSelect: () => void }) {
+  const pictureLight = useRef<THREE.PointLight>(null);
+  useFrame((_, delta) => {
+    const light = pictureLight.current;
+    if (light) light.intensity = THREE.MathUtils.damp(light.intensity, illuminated ? 2.3 : 1.2, 4, delta);
+  });
   const { gl } = useThree();
   const [loaded, setLoaded] = useState<{ url: string; texture: THREE.Texture }>();
   const texture = loaded && loaded.url === art.image ? loaded.texture : null;
@@ -736,7 +755,7 @@ function ArtworkFrame({ art, index, highlighted, showHotspot, onSelect }: { art:
       <boxGeometry args={[Math.min(artW, 1.45), .045, .09]} />
       <meshBasicMaterial color="#ffcf85" toneMapped={false} />
     </mesh>
-    <pointLight position={[0, frameH / 2 + .32, .92]} color="#ffc47c" intensity={1.2} distance={3.4} decay={2} />
+    <pointLight ref={pictureLight} position={[0, frameH / 2 + .32, .92]} color="#ffc47c" intensity={1.2} distance={3.4} decay={2} />
     <group position={[0, 0, .105]}>
       <GiltBorder width={artW + .045} height={artH + .045} depth={.032} />
     </group>
@@ -781,7 +800,15 @@ function MuseumPlaque({ art, number, x, y }: {
   </group>;
 }
 
-function ArtworkWallText({ art, index }: { art: GalleryArtwork; index: number }) {
+function ArtworkWallText({ art, index, compact, visible, onSelect }: {
+  art: GalleryArtwork; index: number; compact: boolean; visible: boolean; onSelect?: () => void;
+}) {
+  const material = useRef<THREE.MeshBasicMaterial>(null);
+  useFrame((_, delta) => {
+    if (material.current) {
+      material.current.opacity = visible ? THREE.MathUtils.damp(material.current.opacity, 1, 7, delta) : 0;
+    }
+  });
   const [label, setLabel] = useState<{ id: string; texture: THREE.CanvasTexture }>();
   useEffect(() => {
     const canvas = document.createElement('canvas');
@@ -803,30 +830,35 @@ function ArtworkWallText({ art, index }: { art: GalleryArtwork; index: number })
       });
     };
     ctx.fillStyle = '#f5d294';
-    ctx.font = '74px Georgia';
-    paragraph(art.title, 100, 78, 2);
+    ctx.font = compact ? 'bold 82px Georgia' : '74px Georgia';
+    paragraph(art.title, 100, compact ? 88 : 78, 2);
     ctx.fillRect(54, 208, 126, 4);
-    ctx.font = '34px Georgia';
+    ctx.font = compact ? 'bold 40px Georgia' : '34px Georgia';
     paragraph('Artist  ·  ' + art.artist, 276, 38, 1);
     paragraph('Medium  ·  ' + art.medium, 329, 38, 1);
     paragraph('Size  ·  ' + art.dimensions, 382, 38, 1);
     ctx.fillRect(54, 422, 850, 2);
     ctx.font = 'italic 43px Georgia';
     ctx.fillText('About the Artwork', 54, 490);
-    ctx.fillStyle = '#eee8dc';
-    ctx.font = '42px sans-serif';
-    paragraph(art.description, 553, 49, 8);
+    ctx.fillStyle = compact ? '#fff8ed' : '#eee8dc';
+    ctx.font = compact ? '500 48px sans-serif' : '42px sans-serif';
+    paragraph(art.description, 553, compact ? 54 : 49, 8);
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
     setLabel({ id: art.id, texture });
     return () => texture.dispose();
-  }, [art]);
+  }, [art, compact]);
 
   const left = index % 2 === 0;
   if (label?.id !== art.id) return null;
   return <mesh position={[left ? -4.79 : 4.79, 1.96, Z_STOPS[index] + (left ? 2.8 : -2.8)]}
-    rotation={[0, left ? Math.PI / 2 : -Math.PI / 2, 0]}>
+    rotation={[0, left ? Math.PI / 2 : -Math.PI / 2, 0]}
+    onClick={event => {
+      if (!visible || !onSelect) return;
+      event.stopPropagation();
+      onSelect();
+    }}>
     <planeGeometry args={[2.65, 2.8]} />
-    <meshBasicMaterial map={label.texture} transparent depthWrite={false} toneMapped={false} />
+    <meshBasicMaterial ref={material} map={label.texture} transparent opacity={0} depthWrite={false} toneMapped={false} />
   </mesh>;
 }

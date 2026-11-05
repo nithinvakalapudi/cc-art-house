@@ -197,3 +197,39 @@ body{background:#f9f7f2;color:#243038}
 .home-immersive-stage:not(:has(.museum-art-details)) .home-immersive-caption{position:absolute;inset:auto 12px 100px;margin:0}
 }
 .museum-wall-actions button{padding:8px 12px;border:1px solid #edb85f;border-radius:99px;background:#0c151b;color:#f4ca88}
+
+@media (max-width: 800px) {
+  .home-immersive-stage .home-immersive-canvas,
+  .home-immersive-stage .museum-art-preview { order: 0; }
+  .home-immersive-stage .home-immersive-caption { order: 1; }
+  .home-immersive-stage .museum-art-details { order: 2; }
+  .home-immersive-stage .museum-wall-actions { order: 3; }
+  .home-immersive-stage .museum-art-details p { max-height: none; }
+}
+
+.museum-close-look {
+  max-width: min(92vw, 900px);
+  max-height: 92dvh;
+  padding: 12px;
+  border: 1px solid #a77a43;
+  border-radius: 12px;
+  background: #10171b;
+  color: #f5d294;
+}
+.museum-close-look::backdrop { background: #080b0eef; }
+.museum-close-look button {
+  display: grid;
+  gap: 10px;
+  justify-items: center;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: zoom-out;
+}
+.museum-close-look img {
+  display: block;
+  max-width: 100%;
+  max-height: 78dvh;
+  object-fit: contain;
+}

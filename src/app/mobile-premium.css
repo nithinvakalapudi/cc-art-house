@@ -126,3 +126,11 @@ html[data-theme=dark] .account-panel .form-feedback.success{background:#203d35;c
   .account-panel .account-actions .button{width:100%;min-height:48px}
 }
 @media(max-width:370px){.account-content{padding-inline:12px!important}.account-panel{padding:19px 15px!important}.account-methods button{font-size:12px}}
+
+@media (max-width: 800px) {
+  .home-immersive-stage .home-immersive-canvas {
+    aspect-ratio: 1.12;
+    min-height: 0;
+    max-height: none;
+  }
+}
