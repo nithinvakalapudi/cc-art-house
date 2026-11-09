@@ -37,6 +37,8 @@ export default function Account() {
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
   const [admin, setAdmin] = useState(false);
   const [message, setMessage] = useState('');
+  const [resendUntil, setResendUntil] = useState(0);
+  const [seconds, setSeconds] = useState(0);
   const [busy, setBusy] = useState(false);
   const [checking, setChecking] = useState(!!db);
 
@@ -52,19 +54,31 @@ export default function Account() {
     }).finally(() => setChecking(false));
   }, []);
 
-  async function sendCode(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  useEffect(() => {
+    if (!resendUntil) return;
+    const interval = window.setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((resendUntil - Date.now()) / 1000));
+      setSeconds(remaining);
+      if (!remaining) window.clearInterval(interval);
+    }, 250);
+    return () => window.clearInterval(interval);
+  }, [resendUntil]);
+
+  async function sendCode(event?: React.FormEvent<HTMLFormElement>) {
+    event?.preventDefault();
+    if (busy || (otpSent && Date.now() < resendUntil)) return;
     if (!db) { setMessage('Account sign-in is temporarily unavailable.'); return; }
     setBusy(true); setMessage('');
     const value = identifier.trim();
     if (intent === 'sign-up' && name.trim().length < 2) { setBusy(false); setMessage('Enter your full name.'); return; }
+    setOtpSent(true);
     const options = { shouldCreateUser: intent === 'sign-up', ...(intent === 'sign-up' ? { data: { full_name: name.trim() } } : {}) };
     try {
       const { error } = mode === 'email'
         ? await db.auth.signInWithOtp({ email: value, options })
         : await db.auth.signInWithOtp({ phone: value, options });
       if (error) setMessage(authErrorMessage(error, mode));
-      else { setOtpSent(true); setMessage(mode === 'email' ? 'Check your inbox and spam folder for your one-time code.' : 'Check your phone for your one-time code.'); }
+      else { setResendUntil(Date.now() + 60_000); setSeconds(60); setMessage(mode === 'email' ? 'Check your inbox and spam folder for your one-time code.' : 'Check your phone for your one-time code.'); }
     } catch {
       setMessage('We couldn’t reach the sign-in service. Check your connection and try again.');
     } finally {
@@ -82,6 +96,10 @@ export default function Account() {
         : await db.auth.verifyOtp({ phone: identifier.trim(), token: otp.trim(), type: 'sms' });
       if (error) setMessage(authErrorMessage(error, mode));
       else {
+        if (data.session && new URLSearchParams(window.location.search).get('returnTo') === 'checkout') {
+          window.location.replace('/cart/checkout');
+          return;
+        }
         setSignedInAs(data.user?.email || data.user?.phone || identifier);
         if (data.user) {
           const { data: role } = await db.from('user_roles').select('role').eq('user_id', data.user.id).in('role', ['admin', 'owner']).maybeSingle();
@@ -113,20 +131,23 @@ export default function Account() {
     <div className="content account-content">
       {checking ? <div className="panel account-panel account-checking" role="status"><span className="loading-spinner" aria-hidden="true"/>Checking your account…</div> : signedInAs ? <div className="panel account-panel">
         <p className="account-kicker">SIGNED IN AS</p><h2>{signedInAs.includes('@') ? <>{signedInAs.slice(0, signedInAs.indexOf('@'))}@<wbr />{signedInAs.slice(signedInAs.indexOf('@') + 1)}</> : signedInAs}</h2><p>View your purchases and follow your custom artwork.</p>
-        <div className="account-actions"><Link className="button primary" href="/account/orders">View orders</Link><Link className="button outline" href="/account/custom-orders">Custom requests</Link><Link className="button outline" href="/account/collection">My art collection</Link><Link className="button outline" href="/account/preferences">Update preferences</Link>{admin && <Link className="button outline" href="/admin">Admin dashboard</Link>}</div>
+        <div className="account-actions"><Link className="button primary" href="/account/orders">My orders</Link><Link className="button outline" href="/account/custom-orders">Custom requests</Link><Link className="button outline" href="/account/collection">My art collection</Link><Link className="button outline" href="/account/preferences">Update preferences</Link>{admin && <Link className="button outline" href="/admin">Admin dashboard</Link>}</div>
         <button className="account-signout" type="button" onClick={signOut} disabled={busy}>{busy ? 'Signing out…' : 'Sign out'}</button>
       </div> : <div className="panel account-panel">
-        <div className="account-methods"><button type="button" className={mode === 'email' ? 'selected' : ''} aria-pressed={mode === 'email'} onClick={() => changeMode('email')}>Email code</button><button type="button" className={mode === 'phone' ? 'selected' : ''} aria-pressed={mode === 'phone'} onClick={() => changeMode('phone')}>Mobile code</button></div>
+        <div className="account-methods"><button type="button" className={mode === 'email' ? 'selected' : ''} disabled={busy} aria-pressed={mode === 'email'} onClick={() => changeMode('email')}>Email code</button><button type="button" className={mode === 'phone' ? 'selected' : ''} disabled={busy} aria-pressed={mode === 'phone'} onClick={() => changeMode('phone')}>Mobile code</button></div>
         <h2>{otpSent ? 'Enter your code' : intent === 'sign-up' ? 'Create your account' : 'Welcome back'}</h2>
-        <p>{otpSent ? `Enter the code sent to ${identifier}.` : intent === 'sign-up' ? 'Tell us your name and we’ll send a one-time code.' : `We’ll send a one-time code to your ${mode === 'email' ? 'email' : 'mobile number'}.`}</p>
+        <p>{otpSent ? `Enter your code when it arrives at ${identifier}.` : intent === 'sign-up' ? 'Tell us your name and we’ll send a one-time code.' : `We’ll send a one-time code to your ${mode === 'email' ? 'email' : 'mobile number'}.`}</p>
         {otpSent ? <form onSubmit={verifyCode} className="account-form">
           <label className="field">One-time code<input inputMode="numeric" autoComplete="one-time-code" required value={otp} onChange={e => setOtp(e.target.value)} /></label>
           <button className="button primary account-submit" disabled={busy}>{busy ? 'Verifying…' : 'Verify and sign in'}</button>
-          <button type="button" className="account-signout" onClick={() => setOtpSent(false)}>Change {mode === 'email' ? 'email' : 'number'}</button>
+          <button type="button" className="button outline" disabled={busy || seconds > 0} onClick={() => void sendCode()}>
+            {seconds > 0 ? 'Resend code in ' + seconds + 's' : 'Resend code'}
+          </button>
+          <button type="button" className="account-signout" disabled={busy} onClick={() => setOtpSent(false)}>Change {mode === 'email' ? 'email' : 'number'}</button>
         </form> : <form onSubmit={sendCode} className="account-form">
           {intent === 'sign-up' && <label className="field">Full name<input type="text" autoComplete="name" minLength={2} maxLength={100} required value={name} onChange={e => setName(e.target.value)} placeholder="Your full name" /></label>}
           <label className="field">{mode === 'email' ? 'Email address' : 'Mobile number with country code'}<input type={mode === 'email' ? 'email' : 'tel'} autoComplete={mode === 'email' ? 'email' : 'tel'} required value={identifier} onChange={e => setIdentifier(e.target.value)} placeholder={mode === 'email' ? 'you@example.com' : '+919876543210'} /></label>
-          <button className="button primary account-submit" disabled={busy}>{busy ? 'Sending…' : intent === 'sign-up' ? 'Create account and send code' : 'Send one-time code'}</button>
+          <button className="button primary account-submit" disabled={busy}>{intent === 'sign-up' ? 'Create account and send code' : 'Send one-time code'}</button>
         </form>}
         {!otpSent && <p className="account-switch">{intent === 'sign-in' ? 'New to The Art House?' : 'Already have an account?'} <button type="button" onClick={() => changeIntent(intent === 'sign-in' ? 'sign-up' : 'sign-in')}>{intent === 'sign-in' ? 'Create an account' : 'Sign in'}</button></p>}
         <p className="account-admin-link"><Link href="/account/admin">Studio admin sign in</Link></p>

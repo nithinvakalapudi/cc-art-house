@@ -134,3 +134,52 @@ html[data-theme=dark] .account-panel .form-feedback.success{background:#203d35;c
     max-height: none;
   }
 }
+
+/* The native dialog sits above the fixed commerce dock and traps focus. */
+.mobile-nav-dialog {
+  position: fixed;
+  inset: 0 0 0 auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: min(100%, 420px);
+  max-width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  background: var(--atelier-paper);
+  color: var(--atelier-ink);
+  overscroll-behavior: contain;
+}
+.mobile-nav-dialog::backdrop { background: #091719a6; }
+body:has(.mobile-nav-dialog[open]) { overflow: hidden; }
+.mobile-nav-sheet { padding: 20px 18px max(20px, env(safe-area-inset-bottom)); }
+.mobile-nav-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.mobile-nav-heading strong { font: 700 clamp(23px, 6vw, 32px) Georgia, serif; }
+.mobile-nav-heading button,
+.mobile-nav-shortcuts a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--atelier-line);
+  border-radius: 10px;
+  background: var(--atelier-surface);
+  color: var(--atelier-ink);
+}
+.mobile-nav-shortcuts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+.mobile-nav-links { display: grid; gap: 4px; }
+.mobile-nav-links a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  color: var(--atelier-ink);
+  font-weight: 650;
+}
+.mobile-nav-links a[aria-current="page"] { background: #943c2d; color: #fff; }
+.mobile-nav-links a:not([aria-current="page"]):is(:hover, :focus-visible) { background: var(--atelier-surface); }

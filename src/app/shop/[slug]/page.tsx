@@ -38,7 +38,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         </dl>
         {artistSource&&<p className="artwork-source"><a href={artistSource.source} target="_blank" rel="noopener noreferrer">See the original artist post ↗</a></p>}
         {painting.artist_video_url&&<a className="button outline artist-video-link" href={painting.artist_video_url} target="_blank" rel="noopener noreferrer">Watch the artist’s studio message ↗</a>}
-        {Number(painting.price)>0&&painting.available?<AddToCartButton item={{id:painting.id,slug:painting.slug,title:painting.title,price:Number(painting.price),image_url:painting.image_url}}/>:<p className="artwork-order-note">{Number(painting.price)===0?'This painting is available by custom quote. ':'This painting has been sold. '}<Link href="/custom-art">Request a similar artwork <ArrowRight size={15}/></Link></p>}
+        {Number(painting.price)>0&&painting.available?<div className="artwork-buy-bar"><div className="artwork-buy-summary"><strong>{priceLabel(painting.price)}</strong><small>Available</small></div><AddToCartButton item={{id:painting.id,slug:painting.slug,title:painting.title,price:Number(painting.price),image_url:painting.image_url}}/></div>:<p className="artwork-order-note">{Number(painting.price)===0?'This painting is available by custom quote. ':'This painting has been sold. '}<Link href="/custom-art">Request a similar artwork <ArrowRight size={15}/></Link></p>}
         <WishlistButton id={painting.id}/><PremiumArtworkActions productId={painting.id} title={painting.title} reservationEnabled={painting.reservation_enabled}/><p className="artwork-order-note">Shipping and payment are confirmed by the studio before dispatch.</p>
       </div>
     </div>

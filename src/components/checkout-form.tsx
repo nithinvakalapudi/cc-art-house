@@ -26,7 +26,7 @@ const FREE_DELIVERY_MINIMUM = 2000;
 
 
 
-export default function CheckoutForm({ identity }: { identity: { name: string; email: string } }) {
+export default function CheckoutForm({ identity, razorpayReady }: { razorpayReady: boolean; identity: { name: string; email: string } }) {
 
   const router = useRouter();
 
@@ -49,7 +49,9 @@ export default function CheckoutForm({ identity }: { identity: { name: string; e
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
 
-    event.preventDefault(); setBusy(true); setError('');
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    setBusy(true); setError('');
 
     if (!db) { setBusy(false); setError('Ordering is temporarily unavailable. Please try again.'); return; }
 
@@ -57,9 +59,7 @@ export default function CheckoutForm({ identity }: { identity: { name: string; e
 
     const { data: auth, error: authError } = await db.auth.getUser();
 
-    if (authError || !auth.user) { setBusy(false); router.push('/account?next=/cart/checkout'); return; }
-
-    const form = new FormData(event.currentTarget);
+    if (authError || !auth.user) { setBusy(false); router.push('/account?returnTo=checkout'); return; }
 
     const submittedPaymentMethod = String(form.get('payment_method') || 'to_be_arranged');
     if (submittedPaymentMethod === 'razorpay' && deliveryMethod === 'shipping' && !deliveryQuote?.priced) { setBusy(false); setError('Enter a supported Bengaluru PIN code to confirm delivery pricing before paying online.'); return; }
@@ -119,7 +119,7 @@ export default function CheckoutForm({ identity }: { identity: { name: string; e
 
       <label className="field">Mobile number<input autoComplete="tel" name="phone" type="tel" inputMode="tel" minLength={7} maxLength={24} required placeholder="+91 98765 43210"/></label>
 
-      <label className="field full">How would you like to receive your painting?<select name="delivery_method" value={deliveryMethod} onChange={event => {const method=event.target.value as 'shipping'|'pickup';setDeliveryMethod(method);setDeliveryQuote(method==='pickup'?{priced:true,fee:0,zone:'Studio collection'}:null);if(method==='pickup'&&paymentMethod==='razorpay'&&!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID)setPaymentMethod('to_be_arranged');}}><option value="shipping">Deliver to my address</option><option value="pickup">Collect near Kundalahalli Gate, Bengaluru</option></select></label>
+      <label className="field full">How would you like to receive your painting?<select name="delivery_method" value={deliveryMethod} onChange={event => {const method=event.target.value as 'shipping'|'pickup';setDeliveryMethod(method);setDeliveryQuote(method==='pickup'?{priced:true,fee:0,zone:'Studio collection'}:null);if(method==='pickup'&&paymentMethod==='razorpay'&&!razorpayReady)setPaymentMethod('to_be_arranged');}}><option value="shipping">Deliver to my address</option><option value="pickup">Collect near Kundalahalli Gate, Bengaluru</option></select></label>
 
       {deliveryMethod === 'shipping' ? <>
 
@@ -127,11 +127,29 @@ export default function CheckoutForm({ identity }: { identity: { name: string; e
 
         <label className="field full">Address line 2 (optional)<input autoComplete="address-line2" name="address_line2" maxLength={180} placeholder="Area, landmark, apartment"/></label>
 
+        <label className="field">PIN / postal code<input autoComplete="postal-code" name="postal_code" inputMode="numeric" minLength={4} maxLength={12} required onChange={async event => {
+          setDeliveryQuote(null);
+          const input = event.currentTarget;
+          const pin = input.value.trim();
+          const city = input.form?.elements.namedItem('city');
+          const state = input.form?.elements.namedItem('state');
+          if (!/^[1-9][0-9]{5}$/.test(pin) || !(city instanceof HTMLInputElement) || !(state instanceof HTMLInputElement)) return;
+          const previousCity = city.value, previousState = state.value;
+          try {
+            const response = await fetch('/api/postal-lookup?pin=' + pin, { signal: AbortSignal.timeout(1000) });
+            if (!response.ok) throw new Error();
+            const address = await response.json();
+            if (!input.isConnected || input.value.trim() !== pin) return;
+            if (city.value === previousCity) city.value = address.city;
+            if (state.value === previousState) state.value = address.state;
+          } catch {
+            // Keep the editable address fields available if lookup fails.
+          }
+        }} onBlur={async event=>{const code=event.currentTarget.value.trim();if(!code||!db)return;const {data}=await db.rpc('get_delivery_quote',{p_postal_code:code});const quote=data as {priced:boolean;zone?:string;fee?:number;estimated_days?:number}|null;setDeliveryQuote(quote?.priced&&total>=FREE_DELIVERY_MINIMUM?{...quote,fee:0}:quote);}}/></label>
         <label className="field">City<input autoComplete="address-level2" name="city" minLength={2} maxLength={100} required/></label>
 
         <label className="field">State<input autoComplete="address-level1" name="state" minLength={2} maxLength={100} required/></label>
 
-        <label className="field">PIN / postal code<input autoComplete="postal-code" name="postal_code" inputMode="numeric" minLength={4} maxLength={12} required onChange={()=>setDeliveryQuote(null)} onBlur={async event=>{const code=event.currentTarget.value.trim();if(!code||!db)return;const {data}=await db.rpc('get_delivery_quote',{p_postal_code:code});const quote=data as {priced:boolean;zone?:string;fee?:number;estimated_days?:number}|null;setDeliveryQuote(quote?.priced&&total>=FREE_DELIVERY_MINIMUM?{...quote,fee:0}:quote);}}/></label>
 
         <label className="field">Country<input autoComplete="country-name" name="country" defaultValue="India" minLength={2} maxLength={80} required/></label>
 
@@ -140,11 +158,11 @@ export default function CheckoutForm({ identity }: { identity: { name: string; e
       <label className="field full">{deliveryMethod === 'pickup' ? 'Collection notes (optional)' : 'Delivery instructions (optional)'}<textarea name="delivery_notes" rows={3} maxLength={1000} placeholder={deliveryMethod === 'pickup' ? 'A preferred day or time' : 'A helpful landmark or delivery timing'}/></label>
 
       {deliveryMethod==='shipping'&&deliveryQuote&&<p className="delivery-quote full" role="status">{deliveryQuote.priced?(Number(deliveryQuote.fee||0)===0?`Free delivery to ${deliveryQuote.zone||'your area'} · estimated ${deliveryQuote.estimated_days||'several'} days.`:`Delivery to ${deliveryQuote.zone||'your area'}: ₹${Number(deliveryQuote.fee||0).toLocaleString('en-IN')} · estimated ${deliveryQuote.estimated_days||'several'} days.`):'No fixed rate yet for this PIN code. The studio will confirm delivery before payment.'}</p>}
-      <label className="field full">Preferred payment method<select name="payment_method" value={paymentMethod} onChange={event=>setPaymentMethod(event.target.value)}><option value="to_be_arranged">Discuss with the studio</option><option value="upi">UPI (after order confirmation)</option><option value="bank_transfer">Bank transfer (after confirmation)</option><option value="cash_on_delivery">Cash on delivery (if available)</option><option value="razorpay" disabled={!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID||giftWrap}>Pay online with Razorpay{giftWrap?' (gift wrapping must be confirmed first)':!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?' (being configured)':''}</option></select></label>
+      <label className="field full">Preferred payment method<select name="payment_method" value={paymentMethod} onChange={event=>setPaymentMethod(event.target.value)}><option value="to_be_arranged">Discuss with the studio</option><option value="upi">UPI (after order confirmation)</option><option value="bank_transfer">Bank transfer (after confirmation)</option><option value="cash_on_delivery">Cash on delivery (COD)</option><option value="razorpay" disabled={!razorpayReady||giftWrap}>Pay online with Razorpay{giftWrap?' (gift wrapping must be confirmed first)':!razorpayReady?' (being configured)':''}</option></select></label>
 
     </div>
 
-    <fieldset className="gift-options"><legend>Delivery and updates</legend><label className="field">Preferred delivery date (optional)<input type="date" name="scheduled_delivery_date" min={new Date().toISOString().slice(0,10)}/></label><label><input type="checkbox" name="whatsapp_opt_in"/> Send order and packaging updates on WhatsApp</label></fieldset><fieldset className="gift-options"><legend>Make it a gift</legend><label><input type="checkbox" name="gift_wrap" checked={giftWrap} onChange={event=>{setGiftWrap(event.target.checked);if(event.target.checked&&paymentMethod==='razorpay')setPaymentMethod('to_be_arranged');}}/> Request gift wrapping</label><p className="muted">The studio will confirm wrapping availability and any charge before payment.</p><label><input type="checkbox" name="handwritten_note"/> Handwrite the message on a studio card</label><label><input type="checkbox" name="hide_price_in_package"/> Keep prices out of the package</label><label className="field">Personal message (optional)<textarea name="gift_message" maxLength={500} rows={3} placeholder="A little note for someone special…"/></label></fieldset><div className="checkout-payment-note"><strong>{paymentMethod==='razorpay'?'Secure online payment':'Payment preference only'}</strong><span>{paymentMethod==='razorpay'?'Your order total is calculated from the store record. Razorpay will process the payment securely; the store only marks it paid after verifying the provider signature.':'This does not charge you online. The studio will confirm availability, delivery charges and your chosen payment method before you pay.'}</span></div>
+    <fieldset className="gift-options"><legend>Delivery and updates</legend><label className="field">Preferred delivery date (optional)<input type="date" name="scheduled_delivery_date" min={new Date().toISOString().slice(0,10)}/></label><label><input type="checkbox" name="whatsapp_opt_in"/> Send order and packaging updates on WhatsApp</label></fieldset><fieldset className="gift-options"><legend>Make it a gift</legend><label><input type="checkbox" name="gift_wrap" checked={giftWrap} onChange={event=>{setGiftWrap(event.target.checked);if(event.target.checked&&paymentMethod==='razorpay')setPaymentMethod('to_be_arranged');}}/> Request gift wrapping</label><p className="muted">The studio will confirm wrapping availability and any charge before payment.</p><label><input type="checkbox" name="handwritten_note"/> Handwrite the message on a studio card</label><label><input type="checkbox" name="hide_price_in_package"/> Keep prices out of the package</label><label className="field">Personal message (optional)<textarea name="gift_message" maxLength={500} rows={3} placeholder="A little note for someone special…"/></label></fieldset><div className="checkout-payment-note"><strong>{paymentMethod==='razorpay'?'Secure online payment':paymentMethod==='cash_on_delivery'?'Pay in cash on delivery':'Payment preference only'}</strong><span>{paymentMethod==='razorpay'?'Your order total is calculated from the store record. Razorpay will process the payment securely; the store only marks it paid after verifying the provider signature.':paymentMethod==='cash_on_delivery'?'No online payment is taken. The studio will confirm cash on delivery availability and your final total before dispatch.':'This does not charge you online. The studio will confirm availability, delivery charges and your chosen payment method before you pay.'}</span></div>
 
     {error && <p role="alert" className="error">{error}</p>}
 
