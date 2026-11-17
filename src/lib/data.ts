@@ -29,7 +29,7 @@ const cachedCatalogue = unstable_cache(async () => {
   ]);
   if (products.error || categories.error) throw new Error(products.error?.message || categories.error?.message);
   return { products: (products.data || []) as Product[], categories: (categories.data || []) as Category[] };
-}, ['art-store-catalogue', process.env.NEXT_PUBLIC_SUPABASE_URL || ''], { tags: ['catalogue'], revalidate: 30 });
+}, ['art-store-catalogue', process.env.NEXT_PUBLIC_SUPABASE_URL || ''], { tags: ['catalogue'], revalidate: 300 });
 
 export async function getCatalogue() {
   try {

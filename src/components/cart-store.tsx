@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 
 import Link from 'next/link';
 import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from 'react';
@@ -58,7 +59,7 @@ export function CartContents() {
   const total = items.reduce((sum, item) => sum + Number(item.price), 0);
   if (!items.length) return <div className="empty-card">Your cart is waiting for a piece you love.<p><Link className="text-link" href="/shop">Browse paintings</Link></p></div>;
   return <div className="cart-layout"><section className="cart-items" aria-label="Items in your cart">{items.map(item => <article className="cart-item" key={item.id}>
-    <Link href={`/shop/${item.slug}`} className="cart-item-image">{item.image_url ? <img src={item.image_url} alt=""/> : <span aria-hidden="true">✳</span>}</Link>
+    <Link href={`/shop/${item.slug}`} className="cart-item-image">{item.image_url ? <Image width={640} height={640} src={item.image_url} alt=""/> : <span aria-hidden="true">✳</span>}</Link>
     <div className="cart-item-info"><Link href={`/shop/${item.slug}`}><strong>{item.title}</strong></Link><span>₹{Number(item.price).toLocaleString('en-IN')}</span><span className="muted">One original painting</span></div>
     <button type="button" className="cart-remove" onClick={() => remove(item.id)} aria-label={`Remove ${item.title}`}><Trash2 size={17}/></button>
   </article>)}</section><aside className="cart-summary"><h2>Order summary</h2><div className="cart-summary-row"><span>Artwork ({items.reduce((n,i)=>n+i.quantity,0)} items)</span><strong>₹{total.toLocaleString('en-IN')}</strong></div><p>Delivery cost will be confirmed by the studio before dispatch.</p><button className="button primary cart-checkout-button" onClick={() => router.push('/cart/checkout')}>Continue to delivery details</button><Link className="cart-continue" href="/shop">Continue shopping</Link></aside></div>;

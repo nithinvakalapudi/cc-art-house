@@ -11,7 +11,7 @@ export default async function DeliverySettings() {
   return <>
     <p className="craft-eyebrow">STORE SETTINGS</p>
     <h1>Delivery pricing</h1>
-    <p className="muted">Only active areas receive a fixed delivery price at checkout. Orders with an artwork subtotal of ₹2,000 or more receive free delivery in supported areas. Collection near Kundalahalli Gate remains free.</p>
+    <p className="muted">Only active areas receive a fixed delivery price at checkout. Orders with an artwork subtotal of ₹2,000 or more receive free delivery in supported areas. All customer orders are shipped to their delivery address.</p>
     {!canWrite&&<p className="notice">Read access: delivery areas are visible, but editing is disabled.</p>}
     <div className="delivery-rate-list">
       {rates?.map(rate => canWrite?<form action={saveDeliveryRate} className="panel delivery-rate-form" key={rate.id}>

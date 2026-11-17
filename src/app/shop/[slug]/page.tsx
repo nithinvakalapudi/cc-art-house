@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { WishlistButton } from '@/components/wishlist';
 import ArtworkPreview from '@/components/artwork-preview';
 import ProductReviews from '@/components/product-reviews';
@@ -9,12 +10,37 @@ import ArtworkGallery, { type ArtworkImage } from '@/components/artwork-gallery'
 import { discountPercent, priceLabel, publicDb } from '@/lib/data';
 import { artistGallery } from '@/lib/artist-gallery';
 import { AddToCartButton } from '@/components/cart-store';
+import { cache } from 'react';
+import { searchSiteName } from '@/lib/search-metadata';
+
+const getPainting = cache(async (slug: string) => {
+  const db = publicDb();
+  if (!db) return null;
+  const { data, error } = await db.from('products').select('*').eq('slug', slug).eq('published', true).eq('archived', false).maybeSingle();
+  if (error) throw new Error('Artwork lookup failed');
+  return data;
+});
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  let painting;
+  try { painting = await getPainting(slug); } catch { return {}; }
+  if (!painting) return {};
+  return {
+    title: `${painting.title} | ${searchSiteName}`,
+    description: painting.description || `View ${painting.title}, an original artwork from CC Art Works.`,
+    alternates: { canonical: `/shop/${encodeURIComponent(slug)}` },
+  };
+}
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const db = publicDb();
-  if (!db) notFound();
-  const { data: painting } = await db.from('products').select('*').eq('slug', slug).eq('published', true).eq('archived', false).single();
+  if (!db) return <div className="content artwork-load-error" role="alert"><h1>Artwork details are unavailable</h1><p>The store connection is not configured right now. Please try again later or return to the collection.</p><div><Link className="button outline" href="/shop">Back to paintings</Link></div></div>;
+  let painting;
+  try { painting = await getPainting(slug); } catch {
+    return <div className="content artwork-load-error" role="alert"><h1>We couldn’t open this artwork</h1><p>The painting details are temporarily unavailable. Try again, or return to the collection.</p><div><Link className="button primary" href={`/shop/${encodeURIComponent(slug)}`}>Try again</Link><Link className="button outline" href="/shop">Back to paintings</Link></div></div>;
+  }
   if (!painting) notFound();
   const discount = discountPercent(painting);
   const { data: gallery } = await db.from('product_images').select('id,url,alt_text,sort_order').eq('product_id', painting.id).order('sort_order');
@@ -42,7 +68,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <WishlistButton id={painting.id}/><PremiumArtworkActions productId={painting.id} title={painting.title} reservationEnabled={painting.reservation_enabled}/><p className="artwork-order-note">Shipping and payment are confirmed by the studio before dispatch.</p>
       </div>
     </div>
-    <div className="content"><ArtworkPreview image={painting.image_url} title={painting.title} dimensions={painting.dimensions}/>{painting.reference_image_url&&painting.completed_image_url&&<section className="before-after panel"><p className="craft-eyebrow">FROM MEMORY TO ART</p><h2>Reference and finished painting</h2><div><figure><img src={painting.reference_image_url} alt="Customer reference supplied with permission"/><figcaption>Reference</figcaption></figure><figure><img src={painting.completed_image_url} alt={`Completed ${painting.title}`}/><figcaption>Finished artwork</figcaption></figure></div></section>}</div>
+    <div className="content"><ArtworkPreview image={painting.image_url} title={painting.title} dimensions={painting.dimensions}/>{painting.reference_image_url&&painting.completed_image_url&&<section className="before-after panel"><p className="craft-eyebrow">FROM MEMORY TO ART</p><h2>Reference and finished painting</h2><div><figure><Image width={800} height={800} src={painting.reference_image_url} alt="Customer reference supplied with permission"/><figcaption>Reference</figcaption></figure><figure><Image width={800} height={800} src={painting.completed_image_url} alt={`Completed ${painting.title}`}/><figcaption>Finished artwork</figcaption></figure></div></section>}</div>
     <ProductReviews productId={painting.id}/><div className="artwork-detail-bottom"><h2>Looking for something personal?</h2><p>Tell us what you imagine and we’ll help plan a custom piece.</p><Link href="/custom-art">Explore custom artwork <ArrowRight size={17}/></Link></div>
   </>;
 }

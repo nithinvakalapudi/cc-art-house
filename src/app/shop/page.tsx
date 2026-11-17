@@ -10,7 +10,13 @@ import ProductCard from '@/components/product-card';
 import {getCatalogue} from '@/lib/data';
 import ShopFilters from './shop-filters';
 import {getSiteSettings} from '@/lib/site-settings';
+import {searchSiteName} from '@/lib/search-metadata';
 export const dynamic='force-dynamic';
+export const metadata = {
+  title: `Shop Original Paintings | ${searchSiteName}`,
+  description: 'Browse original handmade paintings from CC Art Works, including traditional art, portraits, and more.',
+  alternates: { canonical: '/shop' },
+};
 
 export default async function Shop({searchParams}:{searchParams:Promise<{category?:string;q?:string;sort?:string;available?:string;budget?:string}>}){
   const params=await searchParams;const [{products,categories,error},settings]=await Promise.all([getCatalogue(),getSiteSettings()]);

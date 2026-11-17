@@ -9,7 +9,7 @@ const consentKey = 'art-house-cookie-choice';
 const themeKey = 'art-house-theme';
 const utmKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
 
-export default function SiteControls({brand='the art house',links=[['Home','/'],['Shop paintings','/shop'],['Artist gallery','/gallery'],['Custom artwork','/custom-art'],['Our story','/about'],['Contact','/contact'],['Wishlist','/wishlist']],showContact=true}:{brand?:string;links?:string[][];showContact?:boolean}) {
+export default function SiteControls({brand='CC Art Works',links=[['Home','/'],['Shop paintings','/shop'],['Artist gallery','/gallery'],['Custom artwork','/custom-art'],['Our story','/about'],['Contact','/contact'],['Wishlist','/wishlist']],showContact=true}:{brand?:string;links?:string[][];showContact?:boolean}) {
   const router = useRouter();
   const pathname = usePathname();
   const [theme, setTheme] = useState<'light' | 'dark'>('light');

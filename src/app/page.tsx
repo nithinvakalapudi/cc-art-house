@@ -6,6 +6,25 @@ import ProductCard from '@/components/product-card';
 import { artistGallery } from '@/lib/artist-gallery';
 import LazyHomeGallery from '@/components/immersive-gallery/lazy-home-gallery';
 import { getSiteSettings } from '@/lib/site-settings';
+import { searchSiteName, siteUrl } from '@/lib/search-metadata';
+
+export async function generateMetadata() {
+  const settings = await getSiteSettings();
+  return {
+    title: `${searchSiteName} | Handmade Paintings & Custom Artwork`,
+    description: settings.seo_description,
+    alternates: { canonical: '/' },
+    openGraph: { type: 'website', siteName: searchSiteName, url: '/' },
+  } as const;
+}
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: searchSiteName,
+  alternateName: 'CC ArtHouse',
+  url: `${siteUrl}/`,
+};
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +43,7 @@ function homepageProducts<T extends { title: string }>(products: T[]) {
 export default async function Home() {
   const [{ products, categories, error },settings] = await Promise.all([getCatalogue(),getSiteSettings()]);
   return <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
     <section className="craft-hero">
       <div className="craft-hero-copy">
         <span className="craft-eyebrow">{settings.hero_eyebrow}</span>
@@ -46,16 +66,16 @@ export default async function Home() {
 
     <LazyHomeGallery products={products} />
 
-    <section className="home-artist-gallery"><div className="craft-section-inner"><div className="craft-section-heading"><div><span className="craft-eyebrow">REAL ART, REAL HANDS</span><h2>Inside the artist’s world</h2></div><Link href="/gallery">Explore the gallery <ArrowRight size={17}/></Link></div><p className="home-gallery-intro">A glimpse of paintings, mandalas, and keepsakes shared by @artworksof_cctwinzz.</p><div className="home-gallery-grid">{artistGallery.slice(0,4).map(artwork => <Link href="/gallery" key={artwork.image} className="home-gallery-card"><img src={artwork.image} alt={artwork.alt} loading="lazy"/><span>{artwork.title}</span></Link>)}</div></div></section>
+    <section className="home-artist-gallery"><div className="craft-section-inner"><div className="craft-section-heading"><div><h2>From the artist’s gallery</h2></div><Link href="/gallery">Explore the gallery <ArrowRight size={17}/></Link></div><p className="home-gallery-intro">Paintings, mandalas and keepsakes from @artworksof_cctwinzz.</p><div className="home-gallery-grid">{artistGallery.slice(0,4).map(artwork => <Link href="/gallery" key={artwork.image} className="home-gallery-card"><Image width={800} height={800} src={artwork.image} alt={artwork.alt} loading="lazy"/><span>{artwork.title}</span></Link>)}</div></div></section>
 
-    <section className="craft-categories"><div className="craft-section-inner"><div className="craft-section-heading"><div><span className="craft-eyebrow">FIND YOUR STYLE</span><h2>Explore the collection</h2></div><Link href="/shop">View all categories <ArrowRight size={17}/></Link></div><div className="craft-category-grid">{categories.length ? categories.map((category, index) => <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} className={`craft-category craft-category-${index % 4}`}><span className="craft-category-num">0{index + 1} / THE COLLECTION</span><span className="craft-category-mark" aria-hidden="true">{['✺','◒','✦','❀'][index % 4]}</span><strong>{category.name}<ArrowRight size={20}/></strong></Link>) : <p>Categories will appear when the studio publishes them.</p>}</div></div></section>
+    <section className="craft-categories"><div className="craft-section-inner"><div className="craft-section-heading"><div><h2>Browse by category</h2></div><Link href="/shop">View all categories <ArrowRight size={17}/></Link></div><div className="craft-category-grid">{categories.length ? categories.map((category, index) => <Link key={category.id} href={`/shop?category=${encodeURIComponent(category.slug)}`} className={`craft-category craft-category-${index % 4}`}><span className="craft-category-num">0{index + 1} / THE COLLECTION</span><span className="craft-category-mark" aria-hidden="true">{['✺','◒','✦','❀'][index % 4]}</span><strong>{category.name}<ArrowRight size={20}/></strong></Link>) : <p>Categories will appear when the studio publishes them.</p>}</div></div></section>
 
-    <section className="craft-custom"><div className="craft-custom-art" aria-hidden="true"><span>✿</span><span>✻</span><span>✳</span></div><div className="craft-custom-copy"><span className="craft-eyebrow">MADE JUST FOR YOU</span><h2>Your idea.<br /><em>Our canvas.</em></h2><p>Have a colour, feeling, or memory in mind? Tell us what you imagine and we’ll help turn it into a painting made for your space.</p><Link className="craft-button" href="/custom-art">Request customized art <ArrowRight size={18}/></Link></div></section>
+    <section className="craft-custom"><div className="craft-custom-art" aria-hidden="true"><span>✿</span><span>✻</span><span>✳</span></div><div className="craft-custom-copy"><h2>Commission a painting</h2><p>Share a photo, a memory or an idea. Tell us the size and colours you have in mind.</p><Link className="craft-button" href="/custom-art">Request a painting <ArrowRight size={18}/></Link></div></section>
 
-    <section className="craft-promise"><div className="craft-section-inner"><span className="craft-eyebrow">A LITTLE MORE HEART</span><h2>Art worth keeping close.</h2><div className="craft-promise-grid"><div><Palette size={26}/><h3>Original by nature</h3><p>Each painting carries its own character and the touch of its maker.</p></div><div><Heart size={26}/><h3>Personal by design</h3><p>Choose a piece you love, or tell us the story you want to see in art.</p></div><div><PackageCheck size={26}/><h3>Handled with care</h3><p>Every order is prepared thoughtfully for its journey to you.</p></div></div></div></section>
+    <section className="craft-promise"><div className="craft-section-inner"><h2>Buying from the studio</h2><div className="craft-promise-grid"><div><Palette size={26}/><h3>Original paintings</h3><p>Each painting carries its own character and the touch of its maker.</p></div><div><Heart size={26}/><h3>Custom requests</h3><p>Choose a piece you love, or tell us the story you want to see in art.</p></div><div><PackageCheck size={26}/><h3>Packing your artwork</h3><p>Every order is prepared thoughtfully for its journey to you.</p></div></div></div></section>
 
-    <section className="craft-story"><div className="craft-section-inner craft-story-inner"><div><span className="craft-eyebrow">THE ART HOUSE STORY</span><h2>Made slowly.<br /><em>Made to mean more.</em></h2></div><div><p>We believe the best art feels personal. Every canvas carries the marks of a real hand and the care of someone who loves the process.</p><Link href="/about">Get to know us <ArrowRight size={17}/></Link></div></div></section>
-    <section className="home-faq"><div className="home-faq-inner"><span className="craft-eyebrow">GOOD TO KNOW</span><h2>Frequently asked questions</h2><details><summary>Can I request a painting made just for me?</summary><p>Yes. Share your idea, preferred size, style, colours and references through our <Link href="/custom-art">custom artwork form</Link>. We’ll review it with you before production.</p></details><details><summary>Can I collect my painting in Bengaluru?</summary><p>Collection near Kundalahalli Gate is available by appointment. We’ll confirm the exact meeting point when your artwork is ready.</p></details><details><summary>How do I see recent artwork?</summary><p>Explore the <Link href="/gallery">artist gallery</Link> or follow <a href="https://www.instagram.com/artworksof_cctwinzz/" target="_blank" rel="noopener noreferrer">@artworksof_cctwinzz</a> for studio updates.</p></details></div></section>
-    <section className="craft-last-cta"><span className="craft-eyebrow">LET’S MAKE SOMETHING BEAUTIFUL</span><h2>Have an idea in mind?</h2><Link className="craft-outline-button" href="/contact">Get in touch <ArrowRight size={17}/></Link></section>
+    <section className="craft-story"><div className="craft-section-inner craft-story-inner"><div><span className="craft-eyebrow">CC ART WORKS STORY</span><h2>Made slowly.<br /><em>Made to mean more.</em></h2></div><div><p>We believe the best art feels personal. Every canvas carries the marks of a real hand and the care of someone who loves the process.</p><Link href="/about">Get to know us <ArrowRight size={17}/></Link></div></div></section>
+    <section className="home-faq"><div className="home-faq-inner"><h2>Frequently asked questions</h2><details><summary>Can I request a painting made just for me?</summary><p>Yes. Share your idea, preferred size, style, colours and references through our <Link href="/custom-art">custom artwork form</Link>. We’ll review it with you before production.</p></details><details><summary>How is my artwork delivered?</summary><p>We arrange delivery to the address you provide at checkout. The delivery charge and estimated arrival are shown when available.</p></details><details><summary>How do I see recent artwork?</summary><p>Explore the <Link href="/gallery">artist gallery</Link> or follow <a href="https://www.instagram.com/artworksof_cctwinzz/" target="_blank" rel="noopener noreferrer">@artworksof_cctwinzz</a> for studio updates.</p></details></div></section>
+    <section className="craft-last-cta"><h2>Have a question for the studio?</h2><Link className="craft-outline-button" href="/contact">Get in touch <ArrowRight size={17}/></Link></section>
   </>;
 }

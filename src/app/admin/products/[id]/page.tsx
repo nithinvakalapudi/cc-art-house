@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { isAdmin, requireAdminDb } from '@/lib/supabase-server';
@@ -15,7 +16,7 @@ export default async function EditPainting({ params, searchParams }: { params: P
     db.from('product_images').select('id,url,alt_text,sort_order').eq('product_id', id).order('sort_order'),
   ]);
   if (!painting) notFound();
-  if(!canWrite)return <><p><Link href="/admin/products">← All paintings</Link></p><h1>{painting.title}</h1><p className="muted">Read access · editing is disabled for this account.</p><div className="panel">{painting.image_url&&<img src={painting.image_url} alt={painting.title} className="admin-product-preview"/>}<p><b>Price:</b> ₹{Number(painting.price).toLocaleString('en-IN')}{painting.original_price?` (original ₹${Number(painting.original_price).toLocaleString('en-IN')})`:''}</p><p><b>Availability:</b> {painting.available?'Available':'Sold'}</p><p><b>Visibility:</b> {painting.archived?'Archived':painting.published?'Published':'Draft'}</p><p><b>Medium:</b> {painting.medium||'—'}</p><p><b>Dimensions:</b> {painting.dimensions||'—'}</p><p>{painting.description||'No description.'}</p>{painting.published&&<Link href={`/shop/${painting.slug}`}>View in shop ↗</Link>}</div></>;
+  if(!canWrite)return <><p><Link href="/admin/products">← All paintings</Link></p><h1>{painting.title}</h1><p className="muted">Read access · editing is disabled for this account.</p><div className="panel">{painting.image_url&&<Image width={800} height={800} src={painting.image_url} alt={painting.title} className="admin-product-preview"/>}<p><b>Price:</b> ₹{Number(painting.price).toLocaleString('en-IN')}{painting.original_price?` (original ₹${Number(painting.original_price).toLocaleString('en-IN')})`:''}</p><p><b>Availability:</b> {painting.available?'Available':'Sold'}</p><p><b>Visibility:</b> {painting.archived?'Archived':painting.published?'Published':'Draft'}</p><p><b>Medium:</b> {painting.medium||'—'}</p><p><b>Dimensions:</b> {painting.dimensions||'—'}</p><p>{painting.description||'No description.'}</p>{painting.published&&<Link href={`/shop/${painting.slug}`}>View in shop ↗</Link>}</div></>;
   const action = updateProduct.bind(null, id);
   return <>
     <p><Link href="/admin/products">← All paintings</Link></p>
@@ -23,7 +24,7 @@ export default async function EditPainting({ params, searchParams }: { params: P
     {saved === '1' && <p className="form-feedback success" role="status">Painting saved. Published changes are now visible in the shop.</p>}
     <p className="muted">Changes to a published painting appear in the shop. Use price 0 for “Price on request.”</p>
     <div className="panel">
-      {painting.image_url && <img src={painting.image_url} alt={painting.title} className="admin-product-preview" />}
+      {painting.image_url && <Image width={800} height={800} src={painting.image_url} alt={painting.title} className="admin-product-preview" />}
       <form action={action} className="form-grid">
         <label className="field">Title<input name="title" defaultValue={painting.title} required /></label>
         <label className="field">Slug<input name="slug" defaultValue={painting.slug} required pattern="[a-z0-9-]+" /></label>

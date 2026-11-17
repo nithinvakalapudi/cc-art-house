@@ -9,6 +9,7 @@ import SiteControls, { CookieSettingsButton } from "@/components/site-controls";
 import { CartCount, CartProvider } from "@/components/cart-store";
 import MobileCommerceDock from "@/components/mobile-commerce-dock";
 import { getSiteSettings, settingOn } from "@/lib/site-settings";
+import { siteUrl } from "@/lib/search-metadata";
 import "./globals.css";
 import "./editorial.css";
 import "./premium.css";
@@ -22,7 +23,11 @@ import "./audit-fixes.css";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
-  return { title: settings.seo_title, description: settings.seo_description };
+  return {
+    metadataBase: new URL(siteUrl),
+    title: settings.seo_title,
+    description: settings.seo_description,
+  };
 }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

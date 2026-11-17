@@ -1,26 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useSyncExternalStore } from 'react';
 import { Moon, Sun } from 'lucide-react';
 
 type AdminTheme = 'light' | 'dark';
 const storageKey = 'art-house-admin-theme';
 
+const themeEvent = 'art-house-admin-theme-change';
+
+function readTheme(): AdminTheme {
+  return window.localStorage.getItem(storageKey) === 'dark' ? 'dark' : 'light';
+}
+
+function subscribeTheme(update: () => void) {
+  window.addEventListener('storage', update);
+  window.addEventListener(themeEvent, update);
+  return () => {
+    window.removeEventListener('storage', update);
+    window.removeEventListener(themeEvent, update);
+  };
+}
+
 export default function AdminThemeToggle() {
-  const [theme, setTheme] = useState<AdminTheme>('light');
+  const theme = useSyncExternalStore(subscribeTheme, readTheme, (): AdminTheme => 'light');
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey);
-    const next: AdminTheme = saved === 'dark' ? 'dark' : 'light';
-    setTheme(next);
-    document.documentElement.dataset.adminTheme = next;
-  }, []);
+    document.documentElement.dataset.adminTheme = theme;
+  }, [theme]);
 
   function toggleTheme() {
-    const next: AdminTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(next);
-    document.documentElement.dataset.adminTheme = next;
-    window.localStorage.setItem(storageKey, next);
+    window.localStorage.setItem(storageKey, theme === 'dark' ? 'light' : 'dark');
+    window.dispatchEvent(new Event(themeEvent));
   }
 
   return (

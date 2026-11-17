@@ -1,5 +1,4 @@
 'use client';
-/* eslint-disable react-hooks/set-state-in-effect -- viewport capability is detected after browser hydration. */
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';

@@ -1,19 +1,11 @@
 'use client';
+import Image from 'next/image';
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import type { Product } from '@/lib/data';
 
-type Art = {
-  id: string;
-  slug: string;
-  title: string;
-  image_url: string | null;
-  price: number | null;
-  original_price: number | null;
-  palette: string[] | null;
-  room_tags: string[] | null;
-  available: boolean;
-};
+type Art = Pick<Product, 'id' | 'slug' | 'title' | 'description' | 'medium' | 'image_url' | 'price' | 'original_price' | 'available'>;
 
 const roomOptions = ['living room', 'bedroom', 'office', 'entryway', 'gift'] as const;
 const moodOptions = ['warm', 'calm', 'bold', 'joyful', 'minimal'] as const;
@@ -23,7 +15,7 @@ export default function StyleFinder({ products, unavailable = false }: { product
   const [mood, setMood] = useState<(typeof moodOptions)[number]>('warm');
   const results = useMemo(() => products
     .map((product, index) => {
-      const words = [...(product.room_tags || []), ...(product.palette || []), product.title].join(' ').toLowerCase();
+      const words = [product.description || '', product.medium || '', product.title].join(' ').toLowerCase();
       const score = (words.includes(room) ? 3 : 0) + (words.includes(mood) ? 2 : 0) + (product.available ? 1 : 0);
       return { product, score, index };
     })
@@ -46,9 +38,9 @@ export default function StyleFinder({ products, unavailable = false }: { product
       <h2 id="style-results-title">Pieces chosen for you</h2>
       <div className="style-results">
         {results.map(({ product }) => <article key={product.id}>
-          {product.image_url ? <img src={product.image_url} alt={product.title} loading="lazy"/> : <div className="product-placeholder" aria-hidden="true">✦</div>}
+          {product.image_url ? <Image width={800} height={800} src={product.image_url} alt={product.title} loading="lazy"/> : <div className="product-placeholder" aria-hidden="true">✦</div>}
           <h3>{product.title}</h3>
-          <p>{product.palette?.length ? product.palette.join(' · ') : product.room_tags?.length ? product.room_tags.join(' · ') : 'Original handmade painting'}</p>
+          <p>{product.medium || product.description || 'Original handmade painting'}</p>
           {product.original_price && product.price && product.original_price > product.price && <del>₹{Number(product.original_price).toLocaleString('en-IN')}</del>}
           <strong>₹{Number(product.price || 0).toLocaleString('en-IN')}</strong>
           <Link href={`/shop/${product.slug}`}>View artwork <span aria-hidden="true">→</span></Link>

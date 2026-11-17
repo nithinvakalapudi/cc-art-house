@@ -52,7 +52,7 @@ function parseProduct(form: FormData) {
 
 function refresh(slug: string) {
   updateTag('catalogue');
-  revalidatePath('/'); revalidatePath('/shop');
+  revalidatePath('/'); revalidatePath('/shop'); revalidatePath('/style-finder');
   revalidatePath(`/shop/${slug}`); revalidatePath('/admin/products');
 }
 

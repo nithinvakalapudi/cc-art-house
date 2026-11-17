@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import AdminSubmitButton from '@/components/admin-submit-button';
@@ -66,7 +67,7 @@ export default async function AdminOrderDetail({ params }: { params: Promise<{ i
 
     <section className="panel order-lines">
       <h2>Items ordered</h2>
-      {items?.map((item) => <div className="order-line" key={item.id}>{item.image_url && <img src={item.image_url} alt="" />}<div><strong>{item.product_title}</strong><p className="muted">Original painting · Qty {item.quantity}</p></div><strong>{money(item.line_total)}</strong></div>)}
+      {items?.map((item) => <div className="order-line" key={item.id}>{item.image_url && <Image width={96} height={96} src={item.image_url} alt="" />}<div><strong>{item.product_title}</strong><p className="muted">Original painting · Qty {item.quantity}</p></div><strong>{money(item.line_total)}</strong></div>)}
       <div className="cart-summary-row"><span>Artwork subtotal</span><strong>{money(order.subtotal)}</strong></div>
       {Number(order.discount_amount) > 0 && <div className="cart-summary-row"><span>Promotion {order.promotion_code && `(${order.promotion_code})`}</span><strong>−{money(order.discount_amount)}</strong></div>}
       <div className="cart-summary-row"><span>Delivery</span><strong>{order.delivery_priced ? money(order.delivery_fee) : 'To be confirmed'}</strong></div>

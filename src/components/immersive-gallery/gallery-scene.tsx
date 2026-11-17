@@ -11,7 +11,7 @@ export type WalkInput = { keys: Set<string>; x: number; z: number; yaw: number; 
 
 type Props = {
   manual?: boolean;
-  walkInput?: WalkInput;
+  walkInput?: { current: WalkInput };
   artworks: GalleryArtwork[];
   targetStop: number;
   wallDetails?: boolean;
@@ -102,13 +102,13 @@ export default function GalleryScene({ manual = false, walkInput, artworks, targ
         return;
       }
       const step = Math.min(delta, .05);
-      const { keys, x, z, yaw, pitch } = walkInput;
+      const { keys, x, z, yaw, pitch } = walkInput.current;
       look.current.setFromQuaternion(camera.quaternion);
       look.current.y -= yaw;
       look.current.x = THREE.MathUtils.clamp(look.current.x - pitch, -.85, .85);
       look.current.z = 0;
       camera.quaternion.setFromEuler(look.current);
-      walkInput.yaw = walkInput.pitch = 0;
+      walkInput.current.yaw = walkInput.current.pitch = 0;
       const side = x + Number(keys.has('d') || keys.has('arrowright')) - Number(keys.has('a') || keys.has('arrowleft'));
       const forward = z + Number(keys.has('s') || keys.has('arrowdown')) - Number(keys.has('w') || keys.has('arrowup'));
       const speed = 2 / Math.max(1, Math.hypot(side, forward));
@@ -196,8 +196,11 @@ function useMarble(light = false) {
     marble.colorSpace = THREE.SRGBColorSpace;
     marble.wrapS = marble.wrapT = THREE.RepeatWrapping;
     marble.repeat.set(2, light ? 1 : 8);
-    setTexture(marble);
-    return () => marble.dispose();
+    const frame = requestAnimationFrame(() => setTexture(marble));
+    return () => {
+      cancelAnimationFrame(frame);
+      marble.dispose();
+    };
   }, [light]);
   return texture;
 }
@@ -333,8 +336,11 @@ function useEntranceTexture(kind: 'sky' | 'carpet') {
       surface.wrapS = surface.wrapT = THREE.RepeatWrapping;
       surface.repeat.set(5, 58);
     }
-    setTexture(surface);
-    return () => surface.dispose();
+    const frame = requestAnimationFrame(() => setTexture(surface));
+    return () => {
+      cancelAnimationFrame(frame);
+      surface.dispose();
+    };
   }, [kind]);
   return texture;
 }
@@ -784,8 +790,11 @@ function MuseumPlaque({ art, number, x, y }: {
 
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
-    setLabel(texture);
-    return () => texture.dispose();
+    const frame = requestAnimationFrame(() => setLabel(texture));
+    return () => {
+      cancelAnimationFrame(frame);
+      texture.dispose();
+    };
   }, [available, number]);
 
   return <group position={[x, y, .075]}>
@@ -845,8 +854,11 @@ function ArtworkWallText({ art, index, compact, visible, onSelect }: {
     paragraph(art.description, 553, compact ? 54 : 49, 8);
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
-    setLabel({ id: art.id, texture });
-    return () => texture.dispose();
+    const frame = requestAnimationFrame(() => setLabel({ id: art.id, texture }));
+    return () => {
+      cancelAnimationFrame(frame);
+      texture.dispose();
+    };
   }, [art, compact]);
 
   const left = index % 2 === 0;

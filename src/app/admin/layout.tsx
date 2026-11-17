@@ -14,9 +14,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
-        <Link className="admin-sidebar-brand" href="/admin" aria-label="Art House admin overview">
-          <span className="admin-brand-mark">ah</span>
-          <span><strong>Art House</strong><small>STUDIO ADMIN</small></span>
+        <Link className="admin-sidebar-brand" href="/admin" aria-label="CC Art Works admin overview">
+          <span className="admin-brand-mark">CC</span>
+          <span><strong>CC Art Works</strong><small>STUDIO ADMIN</small></span>
         </Link>
         <AdminNavigation role={role} />
         <div className="admin-sidebar-bottom">
@@ -26,7 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       </aside>
       <section className="admin-workspace">
         <header className="admin-topbar">
-          <div><span className="admin-topbar-kicker">THE ART HOUSE / STUDIO</span><span className="admin-topbar-title">Management dashboard</span></div>
+          <div><span className="admin-topbar-kicker">CC ART WORKS / STUDIO</span><span className="admin-topbar-title">Management dashboard</span></div>
           <div className="admin-topbar-right"><AdminThemeToggle /><span className={`admin-role-tag ${role}`}>{role === 'owner' ? 'OWNER' : role === 'admin' ? 'EDITOR' : 'VIEWER'}</span><Link className="admin-topbar-store" href="/">Visit shop<ArrowUpRight size={14}/></Link><AdminLogoutButton /></div>
         </header>
         <main className="admin-main">{children}</main>

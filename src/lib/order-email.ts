@@ -62,7 +62,7 @@ export async function sendOrderEmail(orderId: string, event: string) {
         ? `Hello ${order.customer_name},\n\nWe received your order.\n\n${items}\n\nStatus: ${order.status.replaceAll('_', ' ')}\nDelivery: ${address}\n${order.delivery_priced ? `Delivery charge: ₹${Number(order.delivery_fee).toLocaleString('en-IN')}` : 'Delivery charge: to be confirmed by the studio'}\nOrder total: ₹${Number(order.total).toLocaleString('en-IN')}\n\nThe studio will contact you before dispatch.`
         : event === 'payment:paid'
           ? `Hello ${order.customer_name},\n\nYour payment for order #${orderCode} has been confirmed.\nOrder total: ₹${Number(order.total).toLocaleString('en-IN')}\n\nThe studio will prepare your artwork and keep you updated.`
-          : `Hello ${order.customer_name},\n\nYour order #${orderCode} is now: ${order.status.replaceAll('_', ' ')}.\n\nView your order in Your account on The Art House.`;
+          : `Hello ${order.customer_name},\n\nYour order #${orderCode} is now: ${order.status.replaceAll('_', ' ')}.\n\nView your order in Your account on CC Art Works.`;
 
     let sent = false;
     if (isCustomerCancellation) {
@@ -71,7 +71,7 @@ export async function sendOrderEmail(orderId: string, event: string) {
         from,
         to: admin,
         subject: `Customer cancelled order #${orderCode}`,
-        text: `A customer cancelled their order on The Art House.\n\nOrder: #${orderCode}\nCustomer: ${order.customer_name}\nEmail: ${order.customer_email || 'No email provided'}\nPhone: ${order.phone}\nDelivery: ${address}\nPayment status: ${order.payment_status}\nOrder total: ₹${Number(order.total).toLocaleString('en-IN')}\nReason: ${order.cancellation_reason || 'No reason provided'}\n\nItems:\n${items}\n\nReview this order in the admin portal.${order.payment_status === 'paid' ? '\nPayment was marked paid; review and arrange a refund if appropriate.' : ''}`,
+        text: `A customer cancelled their order on CC Art Works.\n\nOrder: #${orderCode}\nCustomer: ${order.customer_name}\nEmail: ${order.customer_email || 'No email provided'}\nPhone: ${order.phone}\nDelivery: ${address}\nPayment status: ${order.payment_status}\nOrder total: ₹${Number(order.total).toLocaleString('en-IN')}\nReason: ${order.cancellation_reason || 'No reason provided'}\n\nItems:\n${items}\n\nReview this order in the admin portal.${order.payment_status === 'paid' ? '\nPayment was marked paid; review and arrange a refund if appropriate.' : ''}`,
       });
       sent = true;
       if (order.customer_email) {

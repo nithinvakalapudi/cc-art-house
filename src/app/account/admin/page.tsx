@@ -23,7 +23,15 @@ export default function AdminSignIn() {
     setBusy(true); setMessage('');
     try {
       const { data, error } = await db.auth.signInWithPassword({ email: email.trim(), password });
-      if (error) { setMessage(error.message); return; }
+      if (error) {
+        const normalized = error.message.toLowerCase();
+        setMessage(normalized.includes('invalid login credentials')
+          ? 'That email and password do not match. Check both details or use “Forgot your password?” to reset it.'
+          : normalized.includes('email not confirmed')
+            ? 'Confirm this email address in Supabase before signing in, or ask the store owner for help.'
+            : error.message);
+        return;
+      }
       const { data: role, error: roleError } = await db.from('user_roles').select('role').eq('user_id', data.user.id).in('role', ['admin', 'owner']).maybeSingle();
       if (roleError || !role) {
         await db.auth.signOut();
@@ -32,6 +40,8 @@ export default function AdminSignIn() {
       }
       router.push('/admin');
       router.refresh();
+    } catch {
+      setMessage('We couldn’t reach the sign-in service. Check your connection and try again.');
     } finally {
       setPassword('');
       setBusy(false);
