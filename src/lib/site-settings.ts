@@ -13,7 +13,7 @@ export const settingDefaults = {
 } as const;
 export type SiteSettingKey=keyof typeof settingDefaults;
 
-const cached=unstable_cache(async()=>{const db=publicDb();if(!db)return settingDefaults;const{data,error}=await db.from('site_settings').select('key,value');if(error)return settingDefaults;return {...settingDefaults,...Object.fromEntries((data||[]).map(row=>[row.key,row.value]))}},['site-settings'],{tags:['site-settings'],revalidate:30});
+const cached=unstable_cache(async()=>{const db=publicDb();if(!db)return settingDefaults;const{data,error}=await db.from('site_settings').select('key,value');if(error)return settingDefaults;return {...settingDefaults,...Object.fromEntries((data||[]).map(row=>[row.key,row.value]))}},['site-settings'],{tags:['site-settings'],revalidate:300});
 export function normalizeLegacyBrand(settings:Record<string,string>):Record<string,string>{
   const normalized={...settings};
   if(['the art house','cc art house'].includes(normalized.site_name.trim().toLowerCase())) normalized.site_name='CC Art Works';

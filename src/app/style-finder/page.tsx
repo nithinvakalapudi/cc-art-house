@@ -1,7 +1,7 @@
 import { getCatalogue } from '@/lib/data';
 import StyleFinder from './style-finder';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export default async function StyleFinderPage(){
   const {products,error}=await getCatalogue();
