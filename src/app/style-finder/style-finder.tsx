@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { Product } from '@/lib/data';
+import { artistGallery } from '@/lib/artist-gallery';
 
 type Art = Pick<Product, 'id' | 'slug' | 'title' | 'description' | 'medium' | 'image_url' | 'price' | 'original_price' | 'available'>;
 
@@ -36,6 +37,7 @@ export default function StyleFinder({ products, unavailable = false }: { product
     <section aria-labelledby="style-results-title">
       <p className="craft-eyebrow">YOUR CURATED EDIT</p>
       <h2 id="style-results-title">Pieces chosen for you</h2>
+      {unavailable && <p className="style-finder-fallback-note" role="status">The live shop is reconnecting. Here are a few pieces from the studio gallery in the meantime.</p>}
       <div className="style-results">
         {results.map(({ product }) => <article key={product.id}>
           {product.image_url ? <Image width={800} height={800} src={product.image_url} alt={product.title} loading="lazy"/> : <div className="product-placeholder" aria-hidden="true">✦</div>}
@@ -45,7 +47,13 @@ export default function StyleFinder({ products, unavailable = false }: { product
           <strong>₹{Number(product.price || 0).toLocaleString('en-IN')}</strong>
           <Link href={`/shop/${product.slug}`}>View artwork <span aria-hidden="true">→</span></Link>
         </article>)}
-        {!results.length && <div className="empty-card"><h3>{unavailable ? 'The collection could not load' : 'New art is on its way'}</h3><p>{unavailable ? 'Please try again in a moment, or browse the shop directly.' : 'There are no available paintings to recommend right now.'}</p><Link href="/shop">Browse paintings →</Link></div>}
+        {!results.length && unavailable && artistGallery.slice(0, 3).map(art => <article key={art.image}>
+          <Image width={800} height={800} src={art.image} alt={art.alt} loading="lazy"/>
+          <h3>{art.title}</h3>
+          <p>{art.category}</p>
+          <Link href="/gallery">Explore the artist gallery <span aria-hidden="true">→</span></Link>
+        </article>)}
+        {!results.length && !unavailable && <div className="empty-card"><h3>New art is on its way</h3><p>There are no available paintings to recommend right now.</p><Link href="/shop">Browse paintings →</Link></div>}
       </div>
       {!!results.length && <p className="style-finder-shop-link"><Link href="/shop">Explore all paintings →</Link></p>}
     </section>
