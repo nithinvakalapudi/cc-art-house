@@ -1,5 +1,5 @@
 import { unstable_cache } from 'next/cache';
-import { publicDb } from './data';
+import { publicDb, withPublicDataTimeout } from './data';
 
 export const settingDefaults = {
   site_name:'CC Art Works',site_tagline:'You imagine. We create by hand.',announcement_text:'HANDMADE PAINTINGS ✦ PERSONAL ART ✦ MEANINGFUL GIFTS',contact_strip_text:'Made with care, made for your story',seo_title:'CC Art Works | Handmade paintings',seo_description:'Original handmade paintings and custom artwork for meaningful spaces.',
@@ -21,5 +21,5 @@ export function normalizeLegacyBrand(settings:Record<string,string>):Record<stri
   if(normalized.about_story==='The Art House brings handmade paintings, mandalas, traditional art, and custom pieces together in one place.') normalized.about_story='CC Art Works brings handmade paintings, mandalas, traditional art, and custom pieces together in one place.';
   return normalized;
 }
-export async function getSiteSettings(){return normalizeLegacyBrand(await cached())}
+export async function getSiteSettings(){return normalizeLegacyBrand(await withPublicDataTimeout(cached(),2500,settingDefaults))}
 export const settingOn=(value:string)=>value==='true';

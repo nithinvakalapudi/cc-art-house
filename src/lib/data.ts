@@ -40,9 +40,23 @@ const cachedCatalogue = unstable_cache(async () => {
   return { products: (products.data || []) as Product[], categories: (categories.data || []) as Category[] };
 }, ['art-store-catalogue', process.env.NEXT_PUBLIC_SUPABASE_URL || ''], { tags: ['catalogue'], revalidate: 300 });
 
+export async function withPublicDataTimeout<T>(operation: Promise<T>, timeoutMs: number, fallback: T): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      operation,
+      new Promise<T>(resolve => { timer = setTimeout(() => resolve(fallback), timeoutMs); }),
+    ]);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
 export async function getCatalogue() {
   try {
-    return { ...await cachedCatalogue(), error: null as string | null };
+    const result = await withPublicDataTimeout(cachedCatalogue(), 2500, null);
+    if (!result) return { products: [] as Product[], categories: [] as Category[], error: 'Catalogue request timed out' };
+    return { ...result, error: null as string | null };
   } catch (error) {
     return { products: [] as Product[], categories: [] as Category[], error: error instanceof Error ? error.message : 'Catalogue unavailable' };
   }
