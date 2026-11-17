@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   devIndicators: false,
+  experimental: {
+    agentUpgrade: "security",
+  },
   async headers() {
     const contentSecurityPolicy = [
       "default-src 'self'",
