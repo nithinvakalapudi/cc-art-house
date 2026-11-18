@@ -61,3 +61,29 @@ export async function getCatalogue() {
     return { products: [] as Product[], categories: [] as Category[], error: error instanceof Error ? error.message : 'Catalogue unavailable' };
   }
 }
+
+export type StorefrontPromotion = {
+  code: string;
+  title: string;
+  discount_type: 'percentage' | 'fixed';
+  discount_value: number;
+  ends_at: string | null;
+  starts_at: string;
+};
+
+export async function getActivePromotions() {
+  try {
+    const db = publicDb();
+    if (!db) return [] as StorefrontPromotion[];
+    const query = db.from('storefront_promotions')
+      .select('code,title,discount_type,discount_value,ends_at,starts_at')
+      .eq('homepage_featured', true)
+      .order('starts_at', { ascending: true });
+    type QueryResult = Awaited<typeof query>;
+    const result = await withPublicDataTimeout<QueryResult | null>(Promise.resolve(query), 1200, null);
+    if (!result || result.error) return [] as StorefrontPromotion[];
+    return (result.data || []) as StorefrontPromotion[];
+  } catch {
+    return [] as StorefrontPromotion[];
+  }
+}

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { ArrowRight, ArrowUp, Check, Cookie, Menu, Moon, Search, ShoppingBag, Sun, UserRound, X } from 'lucide-react';
+import { ArrowRight, ArrowUp, Check, Cookie, Heart, Menu, Moon, Search, ShoppingBag, Sun, UserRound, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const consentKey = 'art-house-cookie-choice';
@@ -76,6 +76,7 @@ export default function SiteControls({brand='CC Art Works',links=[['Home','/'],[
     <div className="site-control-buttons">
       <button type="button" className="icon-control" onClick={() => setSearch(true)} aria-label="Search the site"><Search size={19} /></button>
       <button type="button" className="icon-control" onClick={toggleTheme} aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}>{theme === 'light' ? <Moon size={19} /> : <Sun size={19} />}</button>
+      <Link href="/wishlist" className="icon-control mobile-wishlist-button" aria-label="Wishlist" title="Wishlist"><Heart size={19} /></Link>
       <button type="button" className="icon-control mobile-menu-button" onClick={() => {
         menuDialog.current?.showModal();
         setMenu(true);

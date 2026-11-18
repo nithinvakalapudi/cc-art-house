@@ -18,14 +18,13 @@ const product = z.object({
   creation_hours: z.string(), edition_number: z.string(), edition_total: z.string(),
   palette: z.string().trim().max(500), room_tags: z.string().trim().max(500),
   artist_video_url: z.union([z.url(), z.literal('')]), reference_image_url: artworkImage, completed_image_url: artworkImage,
-  reservation_hours: z.coerce.number().int().min(1).max(72),
   image_url: artworkImage,
   category_id: z.string(),
   available: z.enum(['true', 'false']),
 });
 
 function parseProduct(form: FormData) {
-  const parsed = product.safeParse({discount_percent:'0',inspiration:'',care_instructions:'',creation_hours:'',edition_number:'',edition_total:'',palette:'',room_tags:'',artist_video_url:'',reference_image_url:'',completed_image_url:'',reservation_hours:'24',...Object.fromEntries(form.entries())});
+  const parsed = product.safeParse({discount_percent:'0',inspiration:'',care_instructions:'',creation_hours:'',edition_number:'',edition_total:'',palette:'',room_tags:'',artist_video_url:'',reference_image_url:'',completed_image_url:'',...Object.fromEntries(form.entries())});
   if (!parsed.success) throw new Error('Check the painting title, slug, price and image URL.');
   const d = parsed.data;
   const gallery: { url: string; alt_text: string; sort_order: number }[] = [];
@@ -46,7 +45,7 @@ function parseProduct(form: FormData) {
     edition_number: d.edition_number ? Number(d.edition_number) : null, edition_total: d.edition_total ? Number(d.edition_total) : null,
     palette: d.palette.split(',').map(value => value.trim()).filter(Boolean), room_tags: d.room_tags.split(',').map(value => value.trim()).filter(Boolean),
     artist_video_url: d.artist_video_url || null, reference_image_url: d.reference_image_url || null, completed_image_url: d.completed_image_url || null,
-    reservation_enabled: form.has('reservation_enabled'), reservation_hours: d.reservation_hours,
+    reservation_enabled: false,
   }, gallery };
 }
 

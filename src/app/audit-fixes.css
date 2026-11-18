@@ -25,18 +25,6 @@ html[data-theme=dark] .mobile-commerce-dock{background:#122329ed;border-color:#4
 html[data-theme=dark] .mobile-commerce-dock a{background:#20383e;border-color:#40585e;color:#edf2ef}
 html[data-theme=dark] .mobile-commerce-dock a[aria-current=page],html[data-theme=dark] .mobile-commerce-dock a.mobile-dock-active{background:#a94835;border-color:#a94835;color:#fff}
 html[data-theme=dark] .mobile-commerce-dock a.mobile-dock-featured:not([aria-current=page]){background:#173b3e;border-color:#54716f;color:#f0c989}
-html[data-theme=dark] .admin-layout{--admin-ink:#edf2ef;--admin-surface:#1c3037;--admin-paper:#17292d;--admin-line:#40585e;--admin-muted:#bdccc8;background:var(--admin-paper);color:var(--admin-ink)}
-html[data-theme=dark] .admin-main{background:#17292d;color:#edf2ef}
-html[data-theme=dark] .admin-main h1,html[data-theme=dark] .admin-main h2,html[data-theme=dark] .admin-main h3,html[data-theme=dark] .admin-main>p{color:#edf2ef!important}
-html[data-theme=dark] .admin-main .muted,html[data-theme=dark] .admin-main small,html[data-theme=dark] .admin-main .admin-feature-heading p{color:#bdccc8!important}
-html[data-theme=dark] .admin-main .panel,html[data-theme=dark] .admin-main .admin-card,html[data-theme=dark] .admin-main .admin-stat-card,html[data-theme=dark] .admin-main .admin-feature-stats>article,html[data-theme=dark] .admin-main .admin-data-panel,html[data-theme=dark] .admin-main .admin-editor-panel,html[data-theme=dark] .admin-main .admin-promotion-card,html[data-theme=dark] .admin-main .admin-customer-card,html[data-theme=dark] .admin-main .admin-activity-list{background:#1c3037;border-color:#40585e;color:#edf2ef}
-html[data-theme=dark] .admin-main a:not(.button):not(.admin-primary-action){color:#f0c989}
-html[data-theme=dark] .admin-main .table{background:#1c3037;color:#edf2ef}
-html[data-theme=dark] .admin-main .table th,html[data-theme=dark] .admin-main .table td{background:#1c3037;color:#edf2ef;border-color:#40585e}
-html[data-theme=dark] .admin-main .admin-welcome{background:linear-gradient(116deg,#243d3d,#2a3c3a 65%,#30463f);border-color:#4b625d}
-html[data-theme=dark] .admin-main .admin-welcome h1{color:#f4eee3!important}
-html[data-theme=dark] .admin-main .admin-welcome p{color:#d0d8d1!important}
-html[data-theme=dark] .admin-main .admin-stat-card>strong,html[data-theme=dark] .admin-main .admin-card-heading h2,html[data-theme=dark] .admin-main .admin-quick-actions h2{color:#edf2ef}
 html[data-theme=dark] .route-loading,html[data-theme=dark] .shop-loading{color:#edf2ef}
 html[data-theme=dark] .route-loading p,html[data-theme=dark] .shop-loading p{color:#bdccc8}
 html[data-theme=dark] .account-panel>h2{overflow-wrap:anywhere;word-break:break-word;font-size:clamp(21px,6vw,30px);line-height:1.2}

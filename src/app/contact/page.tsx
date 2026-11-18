@@ -15,8 +15,8 @@ export default async function ContactPage() {
           <h1>{settings.contact_heading}</h1>
           <p className="contact-lead">{settings.contact_intro}</p>
           <div className="contact-detail-list">
-            <div><span>FOLLOW THE STUDIO</span><a href={settings.instagram_url} target="_blank" rel="noopener noreferrer">{settings.instagram_handle} ↗</a><CopyButton value={settings.instagram_handle} label="Copy Instagram"/><small>See recent artwork and send us a direct message.</small></div>
-            {settings.contact_email&&<div><span>EMAIL</span><a href={`mailto:${settings.contact_email}`}>{settings.contact_email}</a><CopyButton value={settings.contact_email} label="Copy email"/></div>}
+            <div><span>FOLLOW THE STUDIO</span><a href={settings.instagram_url} target="_blank" rel="noopener noreferrer">{settings.instagram_handle} ↗</a><small>See recent artwork and send us a direct message.</small></div>
+            {settings.contact_email&&<div><span>EMAIL</span><a href={`mailto:${settings.contact_email}`}>{settings.contact_email}</a><div className="contact-email-actions"><CopyButton value={settings.contact_email} label="Copy email"/><a href={`mailto:${settings.contact_email}`} className="contact-send-email">Send email</a></div></div>}
             {settings.contact_phone&&<div><span>CALL</span><a href={`tel:${settings.contact_phone}`}>{settings.contact_phone}</a></div>}
             {settings.whatsapp_number&&<div><span>WHATSAPP</span><a href={`https://wa.me/${settings.whatsapp_number.replace(/\D/g,'')}`} target="_blank" rel="noopener noreferrer">Message the studio ↗</a></div>}
           </div>

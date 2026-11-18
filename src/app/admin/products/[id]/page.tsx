@@ -44,8 +44,6 @@ export default async function EditPainting({ params, searchParams }: { params: P
         <label className="field full">Artist video URL<input type="url" name="artist_video_url" defaultValue={painting.artist_video_url || ''} placeholder="https://…"/></label>
         <label className="field">Before/reference image URL<input name="reference_image_url" defaultValue={painting.reference_image_url || ''} placeholder="Use only with customer permission"/></label>
         <label className="field">Finished artwork image URL<input name="completed_image_url" defaultValue={painting.completed_image_url || ''}/></label>
-        <label><input type="checkbox" name="reservation_enabled" defaultChecked={painting.reservation_enabled}/> Allow temporary reservation</label>
-        <label className="field">Reservation hours<input type="number" name="reservation_hours" min="1" max="72" defaultValue={painting.reservation_hours || 24}/></label>
         <label className="field full">Main artwork image URL or gallery path<input name="image_url" defaultValue={painting.image_url || ''} placeholder="https://… or /artist-gallery/image.jpg" /></label>
         {(['Detail view', 'Framed view', 'In a room for scale'] as const).map((label, index) => {
           const image = images?.find(item => item.sort_order === index + 1);

@@ -28,6 +28,7 @@ export async function savePromotion(formData: FormData) {
     : await db.from('store_promotions').insert({ ...values, created_by: user?.id ?? null });
   if (result.error) throw new Error(result.error.code === '23505' ? 'That promotion code already exists.' : 'Could not save the promotion.');
   revalidatePath('/admin/promotions');
+  revalidatePath('/');
   revalidatePath('/cart/checkout');
 }
 
@@ -41,4 +42,18 @@ export async function togglePromotion(formData: FormData) {
   const { error } = await db.from('store_promotions').update({ enabled: !enabled, updated_at: new Date().toISOString() }).eq('id', id);
   if (error) throw new Error('Could not update this promotion.');
   revalidatePath('/admin/promotions');
+  revalidatePath('/');
+}
+
+export async function setHomepagePromotion(formData: FormData) {
+  if (!await isAdmin()) throw new Error('Unauthorized');
+  const id = String(formData.get('id') || '');
+  const featured = formData.get('featured') === 'true';
+  if (featured && !/^[0-9a-f-]{36}$/i.test(id)) throw new Error('Choose a valid promotion.');
+  const db = await serverDb();
+  if (!db) throw new Error('Database unavailable');
+  const { error } = await db.rpc('set_homepage_promotion', { p_promotion_id: featured ? id : null });
+  if (error) throw new Error('Could not update the homepage promotion.');
+  revalidatePath('/admin/promotions');
+  revalidatePath('/');
 }

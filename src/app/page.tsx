@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Heart, PackageCheck, Palette, Sparkles } from 'lucide-react';
-import { getCatalogue } from '@/lib/data';
+import { getActivePromotions, getCatalogue } from '@/lib/data';
 import ProductCard from '@/components/product-card';
+import CopyButton from '@/components/copy-button';
 import { artistGallery } from '@/lib/artist-gallery';
 import LazyHomeGallery from '@/components/immersive-gallery/lazy-home-gallery';
 import { getSiteSettings } from '@/lib/site-settings';
@@ -41,7 +42,7 @@ function homepageProducts<T extends { title: string }>(products: T[]) {
 }
 
 export default async function Home() {
-  const [{ products, categories, error },settings] = await Promise.all([getCatalogue(),getSiteSettings()]);
+  const [{ products, categories, error },settings,promotions] = await Promise.all([getCatalogue(),getSiteSettings(),getActivePromotions()]);
   return <>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }} />
     <section className="craft-hero">
@@ -54,6 +55,8 @@ export default async function Home() {
       </div>
       <div className="craft-hero-image"><Image src={settings.hero_image_url} alt="Featured handmade artwork" fill priority sizes="(max-width: 800px) 100vw, 48vw" quality={85} /></div>
     </section>
+
+    {promotions.length > 0 && <section className="home-promotion-banner" aria-label="Current studio offers"><div className="home-promotion-inner"><span className="craft-eyebrow">A LITTLE SOMETHING FROM THE STUDIO</span>{promotions.map(promotion=><article className="home-promotion-card" key={promotion.code}><div><h2>{promotion.title}</h2><p><strong>{promotion.discount_type==='percentage'?`${Number(promotion.discount_value)}% off`:`₹${Number(promotion.discount_value).toLocaleString('en-IN')} off`}</strong> your order when you enter <b>{promotion.code}</b> at checkout.</p>{promotion.ends_at&&<small>Offer ends {new Intl.DateTimeFormat('en-IN',{dateStyle:'medium',timeZone:'Asia/Kolkata'}).format(new Date(promotion.ends_at))}</small>}</div><div className="home-promotion-actions"><CopyButton value={promotion.code} label="Copy code"/><Link href="/shop">Shop paintings <ArrowRight size={16}/></Link></div></article>)}</div></section>}
 
     <section className="craft-featured">
       <div className="craft-section-inner">

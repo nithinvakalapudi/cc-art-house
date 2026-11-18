@@ -8,7 +8,7 @@ export async function setAdminAccess(form: FormData) {
   const email = String(form.get('email') || '').trim().toLowerCase();
   const access = String(form.get('access') || 'write');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error('Enter a valid email address');
-  if (!['read','write'].includes(access)) throw new Error('Choose read or write access');
+  if (!['read','write','owner'].includes(access)) throw new Error('Choose read, write or owner access');
   const db = await serverDb();
   if (!db) throw new Error('Database unavailable');
   const { data: { user } } = await db.auth.getUser();

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Canvas } from '@react-three/fiber';
-import { Accessibility, ArrowLeft, ArrowRight, CalendarDays, GitCompareArrows, Heart, ImageUp, Maximize2, Mic2, Moon, Pause, Play, RotateCcw, Share2, Sun, Volume2, VolumeX, X, ZoomIn } from 'lucide-react';
+import { Accessibility, ArrowLeft, ArrowRight, CalendarDays, Heart, ImageUp, Maximize2, Mic2, Moon, Pause, Play, RotateCcw, Share2, Sun, Volume2, VolumeX, X, ZoomIn } from 'lucide-react';
 import { AddToCartButton } from '@/components/cart-store';
 import { WishlistButton } from '@/components/wishlist';
 import GalleryScene, {type WalkInput} from './gallery-scene';
@@ -119,7 +119,7 @@ export default function ImmersiveGallery({artworks,autoAdvanceMs=6500,curatorDef
         walk.current.z = Math.max(-1, Math.min(1, (event.clientY - rect.top - rect.height / 2) / 30));
       }} onLostPointerCapture={() => { walk.current.x = walk.current.z = 0; }}>&#10021;</button>}
     </div>}
-    {active&&panelOpen&&!moving&&<aside className={`gallery-art-panel ${stop%2===0?'panel-right':'panel-left'}`} aria-label={`Details for ${active.title}`}><button className="gallery-panel-close" aria-label="Close artwork details" onClick={()=>setPanelOpen(false)}><X/></button><p className="gallery-kicker">STOP {String(stop+1).padStart(2,'0')} · {stop%2===0?'LEFT WALL':'RIGHT WALL'}</p><h2>{active.title}</h2><p className="gallery-artist">By {active.artist}</p><p className="gallery-description">{active.description}</p><dl><div><dt>Medium</dt><dd>{active.medium}</dd></div><div><dt>Dimensions</dt><dd>{active.dimensions}</dd></div><div><dt>Price</dt><dd>{currency(active.price)}</dd></div><div><dt>Status</dt><dd className={active.available?'available':''}>{active.available?'Available':'Sold / collected'}</dd></div></dl><div className="gallery-panel-actions">{active.slug?<Link href={`/shop/${active.slug}`}>View artwork</Link>:<Link href="/custom-art">Request similar</Link>}{active.purchasable&&<WishlistButton id={active.id}/>} {active.purchasable&&<CompareAction id={active.id}/>} {active.purchasable&&active.slug&&active.available&&active.price>0&&<AddToCartButton className="gallery-buy" item={{id:active.id,slug:active.slug,title:active.title,price:active.price,image_url:active.image}}/>}</div></aside>}
+    {active&&panelOpen&&!moving&&<aside className={`gallery-art-panel ${stop%2===0?'panel-right':'panel-left'}`} aria-label={`Details for ${active.title}`}><button className="gallery-panel-close" aria-label="Close artwork details" onClick={()=>setPanelOpen(false)}><X/></button><p className="gallery-kicker">STOP {String(stop+1).padStart(2,'0')} · {stop%2===0?'LEFT WALL':'RIGHT WALL'}</p><h2>{active.title}</h2><p className="gallery-artist">By {active.artist}</p><p className="gallery-description">{active.description}</p><dl><div><dt>Medium</dt><dd>{active.medium}</dd></div><div><dt>Dimensions</dt><dd>{active.dimensions}</dd></div><div><dt>Price</dt><dd>{currency(active.price)}</dd></div><div><dt>Status</dt><dd className={active.available?'available':''}>{active.available?'Available':'Sold / collected'}</dd></div></dl><div className="gallery-panel-actions">{active.slug?<Link href={`/shop/${active.slug}`}>View artwork</Link>:<Link href="/custom-art">Request similar</Link>}{active.purchasable&&<WishlistButton id={active.id}/>} {active.purchasable&&active.slug&&active.available&&active.price>0&&<AddToCartButton className="gallery-buy" item={{id:active.id,slug:active.slug,title:active.title,price:active.price,image_url:active.image}}/>}</div></aside>}
     {finished&&<div className="gallery-finale"><div><button onClick={()=>{setStarted(false);goTo(-1)}}><RotateCcw/> Restart Tour</button><Link href="/shop">Explore all paintings <ArrowRight/></Link></div></div>}
     {started&&<div className="gallery-premium-tools"><button title="Day or evening lighting" onClick={()=>setAtmosphere(v=>v==='day'?'evening':'day')}>{atmosphere==='day'?<Sun/>:<Moon/>}</button><button title="Reduced motion accessibility mode" className={accessible?'active':''} onClick={()=>setAccessible(v=>!v)}><Accessibility/></button></div>}
     {active&&panelOpen&&!moving&&<div className="gallery-experience-actions"><button className={curatorEnabled?'active':''} aria-pressed={curatorEnabled} onClick={()=>setCuratorEnabled(value=>!value)}><Mic2/> {curatorEnabled?'Curator on':'Curator'}</button><button onClick={()=>setInspection(true)}><ZoomIn/> Inspect</button><label><ImageUp/> In my room<input type="file" accept="image/*" onChange={event=>{const file=event.target.files?.[0];if(file)setRoomPreview(URL.createObjectURL(file))}}/></label><button onClick={share}><Share2/> Share</button><button onClick={()=>{const next=reactionCount+1;setReactionCount(next);localStorage.setItem(`art-reactions-${active.id}`,String(next))}}><Heart/> {reactionCount}</button><Link href="/contact"><CalendarDays/> Private appointment</Link></div>}
@@ -145,11 +145,6 @@ function GalleryArtworkFallback({artworks}:{artworks:GalleryArtwork[]}){
       </Link>)}</div>
     </div>
   </div>;
-}
-
-function CompareAction({id}:{id:string}){
-  const[added,setAdded]=useState(false);
-  return <button type="button" className="gallery-compare" onClick={()=>{const current=JSON.parse(localStorage.getItem('art-compare')||'[]') as string[];localStorage.setItem('art-compare',JSON.stringify([...new Set([...current,id])].slice(-3)));setAdded(true)}}><GitCompareArrows size={16}/>{added?'Added':'Compare'}</button>;
 }
 
 function ArtMatchQuiz({artworks,onClose,onMatch}:{artworks:GalleryArtwork[];onClose:()=>void;onMatch:(index:number)=>void}){
