@@ -13,8 +13,9 @@ const packaging = ['awaiting_artwork', 'quality_check', 'protective_wrap', 'fram
 const label = (value: string) => value.replaceAll('_', ' ');
 const money = (value: number | string) => `₹${Number(value || 0).toLocaleString('en-IN')}`;
 
-export default async function AdminOrderDetail({ params }: { params: Promise<{ id: string }> }) {
+export default async function AdminOrderDetail({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ updated?: string }> }) {
   const { id } = await params;
+  const { updated } = await searchParams;
   if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
   const db = await requireAdminDb();
   const canWrite = await isAdmin();
@@ -28,6 +29,7 @@ export default async function AdminOrderDetail({ params }: { params: Promise<{ i
     <p><Link href="/admin/orders">← All orders</Link></p>
     <p className="craft-eyebrow">CUSTOMER ORDER</p>
     <h1>Order #{id.slice(0, 8).toUpperCase()}</h1>
+    {updated === '1' && <p className="notice admin-order-save-confirmation" role="status">Order update saved. The customer can now see the latest fulfillment, payment, and tracking details in My orders.</p>}
     {!canWrite && <p className="notice">Read access: order details are visible, updates are disabled.</p>}
     {error && <p className="error">Order could not be loaded.</p>}
     <p className="muted">Placed {new Date(order.created_at).toLocaleString('en-IN')}</p>

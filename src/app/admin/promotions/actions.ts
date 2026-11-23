@@ -15,6 +15,8 @@ export async function savePromotion(formData: FormData) {
   const maxText = String(formData.get('max_redemptions') || '').trim();
   const maxRedemptions = maxText ? Number(maxText) : null;
   const enabled = formData.get('enabled') === 'on';
+  const showInCart = formData.get('show_in_cart') === 'on';
+  const firstOrderOnly = formData.get('first_order_only') === 'on';
   const parseIndiaDateTime = (value: string) => value ? new Date(`${value}:00+05:30`) : null;
   const startsAt = parseIndiaDateTime(startsAtText) ?? new Date();
   const endsAt = parseIndiaDateTime(endsAtText);
@@ -22,7 +24,7 @@ export async function savePromotion(formData: FormData) {
   const db = await serverDb();
   const user = await currentUser();
   if (!db) throw new Error('Database unavailable');
-  const values = { code, title, discount_type: discountType, discount_value: discountValue, starts_at: startsAt.toISOString(), ends_at: endsAt?.toISOString() ?? null, max_redemptions: maxRedemptions, enabled, updated_at: new Date().toISOString() };
+  const values = { code, title, discount_type: discountType, discount_value: discountValue, starts_at: startsAt.toISOString(), ends_at: endsAt?.toISOString() ?? null, max_redemptions: maxRedemptions, enabled, show_in_cart: showInCart, first_order_only: firstOrderOnly, updated_at: new Date().toISOString() };
   const result = id
     ? await db.from('store_promotions').update(values).eq('id', id)
     : await db.from('store_promotions').insert({ ...values, created_by: user?.id ?? null });
@@ -56,4 +58,17 @@ export async function setHomepagePromotion(formData: FormData) {
   if (error) throw new Error('Could not update the homepage promotion.');
   revalidatePath('/admin/promotions');
   revalidatePath('/');
+}
+
+export async function deletePromotion(formData: FormData) {
+  if (!await isAdmin()) throw new Error('Unauthorized');
+  const id = String(formData.get('id') || '');
+  if (!/^[0-9a-f-]{36}$/i.test(id)) throw new Error('Invalid promotion.');
+  const db = await serverDb();
+  if (!db) throw new Error('Database unavailable');
+  const { error } = await db.from('store_promotions').delete().eq('id', id);
+  if (error) throw new Error('Could not delete this coupon.');
+  revalidatePath('/admin/promotions');
+  revalidatePath('/');
+  revalidatePath('/cart/checkout');
 }

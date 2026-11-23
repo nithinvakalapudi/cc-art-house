@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { sendOrderEmail } from '@/lib/order-email';
 import { isAdmin, serverDb } from '@/lib/supabase-server';
 
@@ -25,8 +26,8 @@ export async function updateOrder(formData: FormData) {
   const db = await serverDb();
   if (!db) throw new Error('Database unavailable');
   const { data: previous } = await db.from('orders').select('status,payment_status,delivery_fee,delivery_priced').eq('id', id).maybeSingle();
-  const { error } = await db.from('orders').update({ status, payment_status: paymentStatus, payment_method: paymentMethod, delivery_fee: deliveryFee, delivery_priced: deliveryPriced, packaging_status: packagingStatus, tracking_carrier: trackingCarrier || null, tracking_number: trackingNumber || null, tracking_url: trackingUrl || null, fulfillment_note: fulfillmentNote, updated_at: new Date().toISOString() }).eq('id', id);
-  if (error) throw new Error('Unable to update this order');
+  const { data: updated, error } = await db.from('orders').update({ status, payment_status: paymentStatus, payment_method: paymentMethod, delivery_fee: deliveryFee, delivery_priced: deliveryPriced, packaging_status: packagingStatus, tracking_carrier: trackingCarrier || null, tracking_number: trackingNumber || null, tracking_url: trackingUrl || null, fulfillment_note: fulfillmentNote, updated_at: new Date().toISOString() }).eq('id', id).select('id').maybeSingle();
+  if (error || !updated) throw new Error('Unable to update this order. Check that this account still has write access.');
   if (previous && (previous.status !== status || previous.payment_status !== paymentStatus || Number(previous.delivery_fee) !== deliveryFee || previous.delivery_priced !== deliveryPriced)) {
     await sendOrderEmail(id, `status:${status}:${paymentStatus}:${Date.now()}`);
   }
@@ -34,4 +35,5 @@ export async function updateOrder(formData: FormData) {
   revalidatePath('/admin/orders');
   revalidatePath('/account/orders');
   revalidatePath('/admin');
+  redirect(`/admin/orders/${id}?updated=1`);
 }
