@@ -97,7 +97,7 @@ export default function CheckoutForm({ identity, razorpayReady }: { razorpayRead
 
       });
 
-      if (orderError) { setError(orderError.message.includes('SOLD') ? 'One of these paintings is no longer available. Refresh your cart and try again.' : orderError.message.includes('PRICE_ON_REQUEST') ? 'A painting in your cart needs a custom quote. Please remove it and contact the studio.' : orderError.message.includes('PROMO_') ? 'That coupon is no longer available. Review the code and try again.' : 'We could not place your order. Please check your details and try again.'); return; }
+      if (orderError) { setError(orderError.message.includes('SOLD') ? 'One of these paintings is no longer available. Refresh your cart and try again.' : orderError.message.includes('PRICE_ON_REQUEST') ? 'A painting in your cart needs a custom quote. Please remove it and contact the studio.' : orderError.message.includes('PROMO_FIRST_ORDER_ONLY') ? 'WELCOME10 is only available on your first order. Remove the coupon or use another offer.' : orderError.message.includes('PROMO_') ? 'That coupon is no longer available. Review the code and try again.' : 'We could not place your order. Please check your details and try again.'); return; }
 
       const id = typeof data === 'string' ? data : (data as { id?: string } | null)?.id;
 
@@ -148,7 +148,7 @@ export default function CheckoutForm({ identity, razorpayReady }: { razorpayRead
 
       <label className="field">Email address<input type="email" name="customer_email" value={identity.email || undefined} readOnly={!!identity.email} autoComplete="email" placeholder={identity.email ? undefined : 'Optional email for order updates'}/></label>
 
-      <label className="field">Mobile number<input autoComplete="tel" name="phone" type="tel" inputMode="tel" minLength={7} maxLength={24} required placeholder="+91 98765 43210"/></label>
+      <label className="field">Mobile number<input autoComplete="tel" name="phone" type="tel" inputMode="tel" minLength={7} maxLength={24} required placeholder="+91 00000 00000"/></label>
 
       <div className="checkout-delivery-choice full"><strong>Online delivery</strong><span>We’ll deliver your artwork to the address below.</span></div>
 

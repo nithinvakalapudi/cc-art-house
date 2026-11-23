@@ -839,10 +839,10 @@ function ArtworkWallText({ art, index, compact, visible, onSelect }: {
       });
     };
     ctx.fillStyle = '#f5d294';
-    ctx.font = compact ? 'bold 82px Georgia' : '74px Georgia';
+    ctx.font = compact ? 'bold 90px Georgia' : '74px Georgia';
     paragraph(art.title, 100, compact ? 88 : 78, 2);
     ctx.fillRect(54, 208, 126, 4);
-    ctx.font = compact ? 'bold 40px Georgia' : '34px Georgia';
+    ctx.font = compact ? 'bold 44px Georgia' : '34px Georgia';
     paragraph('Artist  ·  ' + art.artist, 276, 38, 1);
     paragraph('Medium  ·  ' + art.medium, 329, 38, 1);
     paragraph('Size  ·  ' + art.dimensions, 382, 38, 1);
@@ -850,7 +850,7 @@ function ArtworkWallText({ art, index, compact, visible, onSelect }: {
     ctx.font = 'italic 43px Georgia';
     ctx.fillText('About the Artwork', 54, 490);
     ctx.fillStyle = compact ? '#fff8ed' : '#eee8dc';
-    ctx.font = compact ? '500 48px sans-serif' : '42px sans-serif';
+    ctx.font = compact ? '500 52px sans-serif' : '42px sans-serif';
     paragraph(art.description, 553, compact ? 54 : 49, 8);
     const texture = new THREE.CanvasTexture(canvas);
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -870,7 +870,7 @@ function ArtworkWallText({ art, index, compact, visible, onSelect }: {
       event.stopPropagation();
       onSelect();
     }}>
-    <planeGeometry args={[2.65, 2.8]} />
+    <planeGeometry args={compact ? [2.9, 3] : [2.65, 2.8]} />
     <meshBasicMaterial ref={material} map={label.texture} transparent opacity={0} depthWrite={false} toneMapped={false} />
   </mesh>;
 }

@@ -63,6 +63,38 @@ html[data-theme=dark] .field textarea::placeholder { color: #bdccc8; opacity: 1;
 html:not([data-theme=dark]) .field input::placeholder,
 html:not([data-theme=dark]) .field textarea::placeholder { color: #58625e; opacity: 1; }
 
+/* Order administration uses its own dark mode. Keep every delivery detail legible,
+   including text inherited from the storefront panel styles. */
+html[data-admin-theme=dark] .admin-main .order-detail-panel,
+html[data-admin-theme=dark] .admin-main .order-update-form,
+html[data-admin-theme=dark] .admin-main .order-lines {
+  background: #202b2b !important;
+  border-color: #465856 !important;
+  color: #edf2ed !important;
+}
+html[data-admin-theme=dark] .admin-main .order-detail-panel h2,
+html[data-admin-theme=dark] .admin-main .order-update-form h2,
+html[data-admin-theme=dark] .admin-main .order-lines h2 {
+  color: #fffaf0 !important;
+}
+html[data-admin-theme=dark] .admin-main .order-detail-panel p,
+html[data-admin-theme=dark] .admin-main .order-detail-panel address,
+html[data-admin-theme=dark] .admin-main .order-detail-panel h3,
+html[data-admin-theme=dark] .admin-main .order-lines p,
+html[data-admin-theme=dark] .admin-main .order-update-form label {
+  color: #e1e9e4 !important;
+}
+html[data-admin-theme=dark] .admin-main .order-detail-panel strong,
+html[data-admin-theme=dark] .admin-main .order-lines strong { color: #fffaf0 !important; }
+html[data-admin-theme=dark] .admin-main .order-detail-panel a { color: #f3c57b !important; }
+html[data-admin-theme=dark] .admin-main .order-update-form input:not([type=hidden]),
+html[data-admin-theme=dark] .admin-main .order-update-form select,
+html[data-admin-theme=dark] .admin-main .order-update-form textarea {
+  background: #14201f !important;
+  border-color: #607570 !important;
+  color: #fffaf0 !important;
+}
+
 .shop-quick-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
 .shop-quick-filters label, .shop-quick-filters button {
   display: inline-flex; align-items: center; gap: 8px; min-height: 44px;

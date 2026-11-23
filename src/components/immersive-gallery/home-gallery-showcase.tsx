@@ -74,7 +74,7 @@ export default function HomeGalleryShowcase({products}:{products:Product[]}){
           if (Math.abs(dx) < 42 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
           suppressClickUntil.current = performance.now() + 350;
           navigate(dx < 0 ? 1 : -1);
-        }}><Canvas shadows dpr={compact ? [1, 1.75] : [1.5, 2]} performance={{min:.55}} camera={{position:[0,1.72,8],fov:compact?58:56,near:.1,far:100}} gl={{antialias:true,powerPreference:'high-performance'}}><Suspense fallback={null}><GalleryScene wallDetails artworks={artworks} targetStop={stop} paused={paused || Boolean(inspection)} reducedMotion={reduced} transitionDuration={movementTime} atmosphere="day" mobileQuality={compact} onReady={()=>setReady(true)} onMoving={setMoving} onArrive={arrived} onLabelSelect={pauseToRead} onSelect={index => {
+        }}><Canvas shadows dpr={compact ? [1, 1.75] : [1.5, 2]} performance={{min:.55}} camera={{position:[0,1.72,8],fov:compact?54:56,near:.1,far:100}} gl={{antialias:true,powerPreference:'high-performance'}}><Suspense fallback={null}><GalleryScene wallDetails artworks={artworks} targetStop={stop} paused={paused || Boolean(inspection)} reducedMotion={reduced} transitionDuration={movementTime} atmosphere="day" mobileQuality={compact} onReady={()=>setReady(true)} onMoving={setMoving} onArrive={arrived} onLabelSelect={pauseToRead} onSelect={index => {
           if (moving || index !== stop || performance.now() < suppressClickUntil.current) return;
           pauseToRead();
           setInspection(artworks[index]);
